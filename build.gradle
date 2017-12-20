@@ -1,0 +1,85 @@
+  repositories {
+buildscript {
+    jcenter()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath 'com.netflix.nebula:nebula-plugin-plugin:6.1.1'
+    classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.5.4'
+    classpath 'com.netflix.nebula:nebula-dependency-recommender:5.1.0'
+  }
+}
+apply plugin: 'groovy'
+apply plugin: 'nebula.release'
+apply plugin: 'nebula.info'
+apply plugin: 'nebula.integtest'
+apply plugin: 'nebula.javadoc-jar'
+apply plugin: 'nebula.source-jar'
+apply plugin: 'nebula.maven-publish'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: "nebula.dependency-recommender"
+
+apply plugin: 'idea'
+
+ext {
+  springBootVersion = '1.5.9.RELEASE'
+}
+
+repositories {
+  jcenter()
+  maven { url "https://plugins.gradle.org/m2/" }
+}
+
+group = 'ru.alfalab.gradle.platform.stack'
+
+dependencies {
+  compile gradleApi()
+  compile 'org.codehaus.groovy:groovy-all:2.4.12'
+
+  compile 'com.netflix.nebula:nebula-project-plugin:3.4.0'
+  compile 'com.netflix.nebula:gradle-contacts-plugin:3.0.1'
+  compile 'com.netflix.nebula:gradle-dependency-lock-plugin:5.0.0'
+  compile 'com.netflix.nebula:nebula-dependency-recommender:5.1.0'
+  compile 'com.netflix.nebula:gradle-extra-configurations-plugin:3.2.0'
+  compile 'com.netflix.nebula:gradle-info-plugin:3.6.0'
+  compile 'com.netflix.nebula:nebula-publishing-plugin:5.1.5'
+  compile 'com.netflix.nebula:nebula-release-plugin:6.1.1'
+
+  compile "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+  compile 'org.jfrog.buildinfo:build-info-extractor-gradle:4.5.4'
+
+  testCompile 'com.netflix.nebula:nebula-test:6.1.2'
+  testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
+}
+
+if (!project.version.toString().contains('-dev')) {
+  boolean isSnapshot = project.version.toString().contains('SNAPSHOT')
+  String repo = isSnapshot ? 'snapshots' : 'releases'
+  artifactory {
+    publish {
+      contextUrl = project.findProperty('artifactory_contextUrl')
+      repository {
+        repoKey = repo
+        username = project.findProperty('artifactory_user')
+        password = project.findProperty('artifactory_password')
+      }
+      defaults {
+        publications('nebula', 'testReports')
+        publishConfigs('archives')
+      }
+    }
+  }
+
+  tasks.withType(FindBugs) {
+    reports {
+      xml.enabled = false
+      html.enabled = true
+    }
+    classes = classes.filter {
+      !it.name.endsWith('.json')
+    }
+  }
+  tasks.artifactoryPublish.dependsOn tasks.findByPath('assemble')
+}
