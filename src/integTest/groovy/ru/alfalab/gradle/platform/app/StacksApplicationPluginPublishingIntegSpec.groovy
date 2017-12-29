@@ -43,7 +43,8 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=api') &&
             request.url.contains('platform.deployment.id=ru.alfalab.test%3Aapp0%3Aapp') &&
-            request.url.contains('platform.display-name=app0') &&
+            request.url.contains('platform.deployment.app-name=should-publish-all-artifacts-from-app-type-project') &&
+            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.artifact-type=service')) {
           return MatchResult.exactMatch()
         }
@@ -59,7 +60,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
             request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=doc') &&
-            request.url.contains('platform.display-name=app0') &&
+            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.artifact-type=groovydoc')) {
           return MatchResult.exactMatch()
         }
@@ -72,10 +73,11 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
       wireMockRule.stubFor(requestMatching({ Request request ->
         if (request.method == RequestMethod.PUT &&
             request.url.startsWith('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-javadoc.jar') &&
+            request.url.contains('build.number=') &&
             request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=doc') &&
-            request.url.contains('platform.display-name=app0') &&
+            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.artifact-type=javadoc')) {
           return MatchResult.exactMatch()
         }
@@ -91,7 +93,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
             request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=source') &&
-            request.url.contains('platform.display-name=app0') &&
+            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.artifact-type=sourcecode')) {
           return MatchResult.exactMatch()
         }
@@ -108,7 +110,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
             !request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             !request.url.contains('platform.artifact.name=app0') &&
             !request.url.contains('platform.label=source') &&
-            !request.url.contains('platform.display-name=app0') &&
+            !request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             !request.url.contains('platform.artifact-type=sourcecode')) {
           return MatchResult.exactMatch()
         }

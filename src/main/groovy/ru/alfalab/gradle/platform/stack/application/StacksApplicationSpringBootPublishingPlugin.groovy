@@ -38,7 +38,9 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
       StacksExtension stacksExtension = extensionContainer.findByType(StacksExtension)
       StacksApplicationConfiguration config = stacksExtension.applicationConfig
       String classifier = config.classifierProvider.getOrElse('app')
-      String title = config.titleProvider.getOrElse(project.name)
+      String title = config.titleProvider.getOrElse(rootProject.name)
+      String description = project.description ? project.description : rootProject.description
+      String deploymentId = format('%s:%s:%s', project.group, project.name, classifier)
 
       taskContainer.withType(RepackageTask) { RepackageTask repackageTask ->
         t.dependsOn repackageTask
@@ -57,6 +59,9 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
               'platform.artifact.group': project.group?.toString(),
               'platform.artifact.name' : project.name,
           ]
+          if (description) {
+            commonProperties << ['platform.description': description]
+          }
           def javadocProperties = [
               'platform.artifact-type': 'javadoc',
               'platform.label'        : 'doc',
@@ -73,10 +78,10 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
           ]
 
           def serviceProperties = [
-              'platform.display-name' : title,
-              'platform.deployment.id': format('%s:%s:%s', project.group, project.name, classifier),
-              'platform.artifact-type': 'service',
-              'platform.label'        : 'api',
+              'platform.deployment.app-name': rootProject.name,
+              'platform.deployment.id'      : deploymentId,
+              'platform.artifact-type'      : 'service',
+              'platform.label'              : 'api',
           ]
 
           ArtifactSpec springAppArtifactSpec = ArtifactSpec.builder()
@@ -94,7 +99,7 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
                                                                     .group('*')
                                                                     .version('*')
                                                                     .classifier('groovydoc')
-                                                                    .properties(commonProperties + groovydocProperties)
+                                                                    .properties(filterNull(commonProperties + groovydocProperties))
                                                                     .build()
 
           ArtifactSpec springAppJavadocArtifactSpec = ArtifactSpec.builder()
@@ -128,6 +133,10 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
       }
 
     }
+  }
+
+  private Map<String, String> filterNull(Map<String, String> properties) {
+    properties.findAll { it.value != null }
   }
 
 
