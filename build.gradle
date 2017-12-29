@@ -1,3 +1,5 @@
+import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
+
 buildscript {
   repositories {
     jcenter()
@@ -15,15 +17,16 @@ buildscript {
 apply plugin: 'groovy'
 apply plugin: 'jacoco'
 apply plugin: 'findbugs'
-apply plugin: 'nebula.release'
+apply plugin: 'nebula.dependency-recommender'
+apply plugin: 'nebula.contacts'
 apply plugin: 'nebula.info'
 apply plugin: 'nebula.integtest'
 apply plugin: 'nebula.javadoc-jar'
 apply plugin: 'nebula.source-jar'
 apply plugin: 'nebula.maven-publish'
+apply plugin: 'com.gradle.plugin-publish'
 apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'nebula.dependency-recommender'
-apply plugin: 'java-gradle-plugin'
+apply plugin: 'nebula.release'
 
 ext {
   springBootVersion = '1.5.9.RELEASE'
@@ -35,6 +38,15 @@ repositories {
 }
 
 group = 'ru.alfalab.gradle.platform.stack'
+
+description 'Project with set of plugins for rapid development'
+
+contacts {
+  'tolk.kv@gmail.com' {
+    moniker 'Tolkachev Kirill'
+    github 'lavcraft'
+  }
+}
 
 dependencies {
   compileOnly 'org.projectlombok:lombok:1.16.18'
@@ -90,4 +102,25 @@ tasks.withType(FindBugs) {
   classes = classes.filter {
     !it.name.endsWith('.json')
   }
+}
+
+pluginBundle {
+  plugins {
+    stacksApp {
+      id = 'stacks.app'
+      displayName = 'Stacks Application Project Plugion'
+      description = 'Configure Spring Boot Project'
+      tags = ['springboot', 'plugin']
+    }
+  }
+}
+
+//TODO contribute to nebula.release and avoid this  code
+
+tasks.withType(ArtifactoryTask) { Task task ->
+  plugins.withType(JavaPlugin) {
+    task.dependsOn(project.tasks.build)
+  }
+
+  rootProject.tasks.postRelease.dependsOn(task)
 }
