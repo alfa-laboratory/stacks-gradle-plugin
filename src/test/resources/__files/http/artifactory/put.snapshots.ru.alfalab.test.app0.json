@@ -1,0 +1,15 @@
+{
+  "checksums": {
+    "md5": "d41d8cd98f00b204e9800998ecf8427e",
+    "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  "created": "2017-12-29T19:02:46.849+04:00",
+  "createdBy": "u_m0ln1",
+  "downloadUri": "http://localhost/artifactory/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-20171229.145824-9-app.jar",
+  "mimeType": "application/java-archive",
+  "originalChecksums": {},
+  "path": "/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-20171229.145824-9-app.jar",
+  "repo": "snapshots",
+  "size": "0",
+  "uri": "http://localhost/artifactory/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-20171229.145824-9-app.jar"
+}

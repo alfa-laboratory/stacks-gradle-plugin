@@ -1,17 +1,20 @@
-  repositories {
 buildscript {
+  repositories {
     jcenter()
     maven {
-      url "https://plugins.gradle.org/m2/"
+      url 'https://plugins.gradle.org/m2/'
     }
   }
   dependencies {
     classpath 'com.netflix.nebula:nebula-plugin-plugin:6.1.1'
-    classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.5.4'
+    classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.6.0'
     classpath 'com.netflix.nebula:nebula-dependency-recommender:5.1.0'
   }
 }
+
 apply plugin: 'groovy'
+apply plugin: 'jacoco'
+apply plugin: 'findbugs'
 apply plugin: 'nebula.release'
 apply plugin: 'nebula.info'
 apply plugin: 'nebula.integtest'
@@ -19,9 +22,8 @@ apply plugin: 'nebula.javadoc-jar'
 apply plugin: 'nebula.source-jar'
 apply plugin: 'nebula.maven-publish'
 apply plugin: 'com.jfrog.artifactory'
-apply plugin: "nebula.dependency-recommender"
-
-apply plugin: 'idea'
+apply plugin: 'nebula.dependency-recommender'
+apply plugin: 'java-gradle-plugin'
 
 ext {
   springBootVersion = '1.5.9.RELEASE'
@@ -35,6 +37,7 @@ repositories {
 group = 'ru.alfalab.gradle.platform.stack'
 
 dependencies {
+  compileOnly 'org.projectlombok:lombok:1.16.18'
   compile gradleApi()
   compile 'org.codehaus.groovy:groovy-all:2.4.12'
 
@@ -48,13 +51,16 @@ dependencies {
   compile 'com.netflix.nebula:nebula-release-plugin:6.1.1'
 
   compile "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-  compile 'org.jfrog.buildinfo:build-info-extractor-gradle:4.5.4'
+  compile 'org.jfrog.buildinfo:build-info-extractor-gradle:4.6.0'
 
   testCompile 'com.netflix.nebula:nebula-test:6.1.2'
   testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
+  testCompile 'org.mockito:mockito-core:1.10.19'
+  testCompile "com.github.tomakehurst:wiremock:2.12.0"
 }
 
 if (!project.version.toString().contains('-dev')) {
+  logger.quiet 'Configure artifactory...'
   boolean isSnapshot = project.version.toString().contains('SNAPSHOT')
   String repo = isSnapshot ? 'snapshots' : 'releases'
   artifactory {
@@ -72,14 +78,16 @@ if (!project.version.toString().contains('-dev')) {
     }
   }
 
-  tasks.withType(FindBugs) {
-    reports {
-      xml.enabled = false
-      html.enabled = true
-    }
-    classes = classes.filter {
-      !it.name.endsWith('.json')
-    }
-  }
   tasks.artifactoryPublish.dependsOn tasks.findByPath('assemble')
+}
+
+tasks.withType(FindBugs) {
+  ignoreFailures = true
+  reports {
+    xml.enabled = false
+    html.enabled = true
+  }
+  classes = classes.filter {
+    !it.name.endsWith('.json')
+  }
 }
