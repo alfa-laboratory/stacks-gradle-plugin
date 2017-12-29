@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toMap;
  * 1. Add Aware interface to {@link #supportedInterfaces}
  * 2. Add logging in {@link #StacksContainerInjector(Project)}
  * 3. Put actual value for inject into {@link #values}
- * 4. Test it {@link StacksInjectorUnitTest}
+ * 4. Test it {@link StacksContainerInjector} unit test in StacksInjectorUnitTest
  *
  * @author tolkv
  * @version 22/12/2017
