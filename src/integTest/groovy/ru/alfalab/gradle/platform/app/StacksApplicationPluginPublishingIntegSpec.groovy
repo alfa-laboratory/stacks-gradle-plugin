@@ -60,6 +60,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
             request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=doc') &&
+            request.url.contains('platform=true') &&
             request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.artifact-type=groovydoc')) {
           return MatchResult.exactMatch()
@@ -77,6 +78,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
             request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=doc') &&
+            request.url.contains('platform=true') &&
             request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.artifact-type=javadoc')) {
           return MatchResult.exactMatch()
@@ -93,6 +95,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
             request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=source') &&
+            request.url.contains('platform=true') &&
             request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.artifact-type=sourcecode')) {
           return MatchResult.exactMatch()
@@ -110,6 +113,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
             !request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             !request.url.contains('platform.artifact.name=app0') &&
             !request.url.contains('platform.label=source') &&
+            !request.url.contains('platform=true') &&
             !request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             !request.url.contains('platform.artifact-type=sourcecode')) {
           return MatchResult.exactMatch()

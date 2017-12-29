@@ -58,6 +58,7 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
               'platform.display-name'  : title,
               'platform.artifact.group': project.group?.toString(),
               'platform.artifact.name' : project.name,
+              'platform'               : 'true'
           ]
           if (description) {
             commonProperties << ['platform.description': description]
