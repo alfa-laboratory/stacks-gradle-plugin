@@ -2,9 +2,9 @@ package ru.alfalab.gradle.platform.stack.base
 
 import nebula.plugin.release.ReleasePlugin
 import org.gradle.api.Task
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
@@ -19,10 +19,15 @@ class StacksReleasePlugin extends StacksAbstractPlugin implements TaskContainerA
 
   @Override
   void applyPlugin() {
-    rootProject.plugins.apply ReleasePlugin
+    if(rootProject == project) {
+      rootProject.plugins.apply ReleasePlugin
+    } else {
+      warn 'stacks.release plugin must be applied only to root project'
+      rootProject.pluginManager.apply StacksReleasePlugin
+    }
 
     taskContainer.withType(ArtifactoryTask) { Task task ->
-      pluginContainer.withType(JavaPlugin) {
+      pluginContainer.withType(LifecycleBasePlugin) {
         task.dependsOn(project.tasks.build)
       }
 

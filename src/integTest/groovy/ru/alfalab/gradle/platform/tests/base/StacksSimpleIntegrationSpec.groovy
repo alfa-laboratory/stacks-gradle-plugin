@@ -56,6 +56,16 @@ class StacksSimpleIntegrationSpec extends IntegrationSpec {
     writeHelloWorld("ru.stacks.test.apps.$name", file(name))
   }
 
+  protected void createSubprojectWithPlugin(String name, Class plugin) {
+    addSubproject(
+        name,
+        """
+      ${applyPlugin(plugin)}
+      """.stripIndent()
+    )
+    writeHelloWorld("ru.stacks.test.apps.$name", file(name))
+  }
+
   protected void generateSevenProjectsTestGroup0() {
     createAppSubproject('app0')
     createAppSubproject('app1')
