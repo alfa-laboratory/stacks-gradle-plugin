@@ -1,18 +1,55 @@
 package ru.alfalab.gradle.platform.stack.base
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import groovy.transform.CompileStatic
+import nebula.plugin.info.InfoBrokerPlugin
+import nebula.plugin.info.InfoPlugin
+import nebula.plugin.info.InfoReporterPlugin
+import nebula.plugin.info.scm.ScmInfoPlugin
+import org.gradle.api.Action
+import org.gradle.api.plugins.PluginContainer
+import org.gradle.api.tasks.TaskContainer
+import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
+import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
+import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
+import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
 
 /**
  * @author tolkv
  * @version 21/12/2017
  */
-class StacksProjectInformationPlugin extends StacksAbstractPlugin {
+@CompileStatic
+class StacksProjectInformationPlugin extends StacksAbstractPlugin implements TaskContainerAware, PluginContainerAware, InfoReporterPlugin {
+  TaskContainer   taskContainer
+  PluginContainer pluginContainer
 
   @Override
   void applyPlugin() {
-    //TODO configure SCM Info plugins
-    //TODO configure
+    pluginContainer.apply(InfoPlugin)
+
+    addMetaInformationForArtifactoryTask { ArtifactoryTask task ->
+      afterEvaluate {
+
+        project.plugins.withType(InfoBrokerPlugin) { InfoBrokerPlugin manifestPlugin ->
+          def artifactMetaProperties = manifestPlugin.buildManifest()
+          if (task.properties) {
+            debug "add properties[$artifactMetaProperties] to task[$task.name]"
+            artifactMetaProperties.each {
+              task.properties.put(it.key, it.value)
+            }
+          }
+        }
+
+      }
+
+    }
+  }
+
+  private void addMetaInformationForArtifactoryTask(Action<ArtifactoryTask> taskClosure) {
+    pluginContainer.withType(ScmInfoPlugin) {
+      pluginContainer.withType(ArtifactoryPlugin) {
+        taskContainer.withType(ArtifactoryTask, taskClosure)
+      }
+    }
   }
 
 }

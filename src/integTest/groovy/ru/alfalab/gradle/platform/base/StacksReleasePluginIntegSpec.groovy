@@ -1,12 +1,8 @@
 package ru.alfalab.gradle.platform.base
 
-import nebula.test.IntegrationSpec
-import nebula.test.PluginProjectSpec
-import ru.alfalab.gradle.platform.stack.base.StacksBasePlugin
 import ru.alfalab.gradle.platform.stack.base.StacksReleasePlugin
 import ru.alfalab.gradle.platform.stack.base.publish.StacksArtifactoryPlugin
 import ru.alfalab.gradle.platform.tests.base.StacksGitIntegrationSpec
-import ru.alfalab.gradle.platform.tests.base.StacksSimpleIntegrationSpec
 
 /**
  * @author tolkv

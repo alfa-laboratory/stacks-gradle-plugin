@@ -10,7 +10,11 @@ Plugins for implement next process:
 
 See plugins description for more information
 
+# General Plugins
+
 ## Plugin `stacks.app`
+
+Apply this plugin to project or subproject which contained a deployable Spring Boot Application
 
 ### Mission'
 
@@ -29,28 +33,72 @@ Simplify Spring Boot Application configuration
     
 
 ### How to use
-    buildscript {
-        repositories {
-            
-        }
-        dependencies {
-            
-        }
+    stacks {
+      application {
+        classifier = 'classifier'
+        title = 'test-project'
+      }
     }
     apply plugin: 'stacks.app'
 
 ### Extension 
 
+    stacks {
+      application {
+        classifier = 'app'
+        title = rootProject.name
+      }
+    }
 
+| property   | use for                                              |
+| ---        | ---                                                  |
+| classifier | customize  artifact classifier                       |
+| title      | customize `platform.display-name` artifact metadata  |
 
-## Plugin `stacks.doc`
+## Plugin `stacks.release`
 
 ### Mission
 
 ### How to use
 
-### 
+    apply plugin: 'stacks.release`
 
+## Plugin `stacks.artifactory`
+
+### Mission
+
+### How to use
+
+    apply plugin: 'stacks.artifactory`
+
+### Extension
+
+Customise default publish repositories
+     
+     stacks {
+        repositories {
+          snapshot 'libs-snapshot-local'
+          releases 'libs-release-local'
+        }
+     }
+    
+use libs layout `libs-release-local` and `libs-snapshot-local`
+        
+     stacks {
+        repositories {
+          useLibsRepositories()
+        }
+     }
+
+use plugins layout `plugins-release-local` and `plugins-snapshot-local`
+      
+     stacks {
+        repositories {
+          usePluginsRepositories()
+        }    
+     }
+     
+Defauly values can by override by artifactory section in user `build.gradle` file too
 
 
 ## Plugin `stacks.lib`
@@ -62,10 +110,30 @@ Simplify Spring Boot Application configuration
 ### 
 
 
-## Plugin `stacks.artifactory`
+###
+## Plugin `stacks.doc`
 
 ### Mission
 
 ### How to use
 
 ### 
+
+# Side Plugins
+
+###
+## Plugin `stacks.info`
+
+Simple plugin based on nebula info plugins for add advanced meta info for artifacts
+
+### Mission
+
+Add meta information about environment, git, dependencies, scm, ci, java and export it to Jar file as properties and manifest file. 
+Also extract all information to artifacts metadata in artifactory (need stacks.artifactory plugin)
+
+### How to use
+
+    apply plugin: 'stacks.info'
+    
+### Extension
+

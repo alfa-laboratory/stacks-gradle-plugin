@@ -10,6 +10,7 @@ import com.github.tomakehurst.wiremock.matching.MatchResult
 import com.github.tomakehurst.wiremock.matching.UrlPathPattern
 import com.github.tomakehurst.wiremock.matching.ValueMatcher
 import org.junit.Rule
+import ru.alfalab.gradle.platform.tests.base.StacksGitIntegrationSpec
 import ru.alfalab.gradle.platform.tests.base.StacksSimpleIntegrationSpec
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
@@ -17,13 +18,19 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
  * @author tolkv
  * @version 20/12/2017
  */
-class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegrationSpec {
+class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpec {
   public static final String       DEFAULT_GROUP = 'ru.alfalab.test'
   @Rule               WireMockRule wireMockRule  = new WireMockRule()
 
   def setup() {
     createAppSubproject('app0')
     createLibSubproject('lib0')
+  }
+
+  @Override
+  void setupProject() {
+    configureForVersion('0.1.0-SNAPSHOT')
+    git.add(patterns: ['build.gradle', '.gitignore'] as Set)
   }
 
   def 'should publish all artifacts from app type project'() {
@@ -38,7 +45,10 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
       wireMockRule.stubFor(requestMatching({ Request request ->
         if (request.method == RequestMethod.PUT &&
             request.url.startsWith('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-app.jar') &&
+            request.url.contains('Module-Source=') &&
+            request.url.contains('Module-Origin=') &&
             request.url.contains('build.number=') &&
+            request.url.contains('version=0.1.0-SNAPSHOT') &&
             request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=api') &&
@@ -127,8 +137,6 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksSimpleIntegration
       wireMockRule.stubFor(put('/api/build')
                                .willReturn(aResponse()
                                                .withStatus(204)))
-
-      configureForVersion('0.1.0-SNAPSHOT')
 
     when:
       def successfully = runTasksSuccessfully('aP')

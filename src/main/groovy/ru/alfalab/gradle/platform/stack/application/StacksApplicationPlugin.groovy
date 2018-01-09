@@ -1,8 +1,6 @@
 package ru.alfalab.gradle.platform.stack.application
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksProgramLanguagePlugin
 

@@ -3,7 +3,6 @@ package ru.alfalab.gradle.platform.stack.application
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.plugins.ExtensionContainer
-import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.TaskContainer
@@ -12,11 +11,9 @@ import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import org.springframework.boot.gradle.repackage.RepackageTask
 import ru.alfalab.gradle.platform.stack.api.ExtensionContainerAware
-import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksExtension
-import ru.alfalab.gradle.platform.stack.base.StacksPublicationPlugin
 
 import static java.lang.String.format
 
@@ -50,7 +47,7 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
         skip = false
         publications(DEFAULT_PUBLISH_CONFIGURATION_NAME)
 
-        // because build-info-extractor remove all artifact specs from ArtifactoryTask, which was set by artifactoryPublish.properties dsl
+        // because build-info-extractor remove all artifact specs from ArtifactoryTask, which was set by artifactoryPublish.properties dsl. And because i can! Definitely!
         // i hope, this is a temporary code, but who knows...
         doFirst('addArtifactSpecAgain') { ArtifactoryTask actionTask ->
 
@@ -58,7 +55,8 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
               'platform.display-name'  : title,
               'platform.artifact.group': project.group?.toString(),
               'platform.artifact.name' : project.name,
-              'platform'               : 'true'
+              'platform'               : 'true',
+              'version'                : project.version?.toString()
           ]
           if (description) {
             commonProperties << ['platform.description': description]

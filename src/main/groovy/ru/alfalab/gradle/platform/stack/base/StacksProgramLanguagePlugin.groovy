@@ -1,11 +1,6 @@
 package ru.alfalab.gradle.platform.stack.base
 
 import groovy.transform.CompileStatic
-import org.gradle.api.GradleException
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.plugins.quality.CodeNarcPlugin
 
 /**
@@ -18,6 +13,7 @@ class StacksProgramLanguagePlugin extends StacksAbstractPlugin {
   @Override
   void applyPlugin() {
     pluginManager.with {
+      apply StacksProjectInformationPlugin
       apply StacksPublicationPlugin
 
       apply 'groovy'
