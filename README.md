@@ -57,20 +57,51 @@ Simplify Spring Boot Application configuration
 
 ## Plugin `stacks.release`
 
+Nebula Release backend plugin
+
 ### Mission
 
-### How to use
+Configure release logic, apply `nebula.release` plugin and configure it for multiproject builds
 
-    apply plugin: 'stacks.release`
+### How to use
+Requirements:
+
+1. repository with initial commit
+2. configured remote for check origin and push tags
+3. configured authentication (public key/password/hardcoded/ssh-agent) for access to remote repo
+
+        apply plugin: 'stacks.release`
+    
+        >(0) $ ./gradlew snapshot
+        >(1) $ ./gradlew candidate
+        >(2) $ ./gradlew final
+    
+1. build -SNAPSHOT artifact (use repo from `stacks.repositories.snapshot` section provided by `stacks.artifactory` plugin)
+2. build -rc artifact (use repo from `stacks.repositories.releases` section provided by `stacks.artifactory` plugin)
+3. build release artifact (use repo from `stacks.repositories.releases` section provided by `stacks.artifactory` plugin)
+
 
 ## Plugin `stacks.artifactory`
 
+Configure artifactory tasks and publish logic
+
 ### Mission
+
+Configure artifactory tasks, publish repositories and integrate with other plugins
+Use it with `stacks.publications` plugin and `stacks.release`
 
 ### How to use
 
     apply plugin: 'stacks.artifactory`
 
+    > $ ./gradlew artifactoryPublish
+
+or apply `stacks.release` plugin and use
+    
+    > $ ./gradlew snapshot
+    > $ ./gradlew candidate
+    > $ ./gradlew final
+    
 ### Extension
 
 Customise default publish repositories
@@ -146,7 +177,6 @@ Resolve spring boot dependencies version according next order
 
 # Side Plugins
 
-###
 ## Plugin `stacks.project.version-to-file`
 
 Create `project-version` file in rootProject build directory
@@ -155,6 +185,24 @@ Create `project-version` file in rootProject build directory
 
 Help to resolve project version after build
 
+### How to use
+
+    apply plugin: 'stacks.project.version-to-file'
+
+## Plugin `stacks.publications`
+
+Configure default publications for project. Recommend to use with `stacks.artifactory`
+
+### Mission
+
+Easy publications configuration
+
+1. auto create publications for java, groovy. Support jar/war
+2. provide name and description from project to published pom.xml
+3. export project dependencies to pom.xml from compile/compileOnly/provided/compileApi configurations. Export as provided/runtime scopes in maven 
+4. export developer info – name, email, role (use `nebula.contacts` plugin) to pom.xml
+5. Add meta about git repo to resulted jar
+ 
 ### How to use
 
     apply plugin: 'stacks.project.version-to-file'
