@@ -98,17 +98,38 @@ use plugins layout `plugins-release-local` and `plugins-snapshot-local`
         }    
      }
      
-Defauly values can by override by artifactory section in user `build.gradle` file too
+Default values can by override by artifactory section in user `build.gradle` file too
 
+
+## Plugin `stacks.dependencies`
+
+Configure Dependency Management Plugin
+May be useful for batch dependency configuration for
+
+* spring
+
+### Mission
+
+Configure pack of dependencies for some frameworks. Provide default dependencies.
+Add generic dependencies like lombok
+
+### How to use
+
+    apply plugin: 'stacks.dependencies'
+
+### Extension 
+
+     stacks {
+        spring {
+          bootVersion = '1.5.9.RELEASE' //<-- default value
+        }    
+     }
 
 ## Plugin `stacks.lib`
 
 ### Mission
 
 ### How to use
-
-### 
-
 
 ###
 ## Plugin `stacks.doc`
@@ -117,11 +138,23 @@ Defauly values can by override by artifactory section in user `build.gradle` fil
 
 ### How to use
 
-### 
 
 # Side Plugins
 
 ###
+## Plugin `stacks.project.version-to-file`
+
+Create `project-version` file in rootProject build directory
+
+### Mission
+
+Help to resolve project version after build
+
+### How to use
+
+    apply plugin: 'stacks.project.version-to-file'
+
+
 ## Plugin `stacks.info`
 
 Simple plugin based on nebula info plugins for add advanced meta info for artifacts
