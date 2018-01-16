@@ -34,6 +34,7 @@ class StacksReleasePluginProjectSpec extends StacksSimpleIntegrationSpec {
       def runResult = runTasksSuccessfully('checkRelease')
 
     then:
+      runResult.wasExecuted('stacksProjectVersionFileCreateTask')
       runResult.standardOutput.contains('stacks.release plugin must be applied only to root project')
       runResult.standardOutput.contains('should apply stacks.release plugin to rootProject=true')
   }

@@ -30,7 +30,8 @@ Simplify Spring Boot Application configuration
     platform.repo.slug=git project slug (extract from remotes/origin)
     platform.label=APP
     version=project.version
-    
+
+Export additional info to `/info` endpoint in app. See `spring-boot-actuator`    
 
 ### How to use
     stacks {

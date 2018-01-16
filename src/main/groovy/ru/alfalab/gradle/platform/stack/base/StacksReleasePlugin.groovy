@@ -21,6 +21,7 @@ class StacksReleasePlugin extends StacksAbstractPlugin implements TaskContainerA
   void applyPlugin() {
     if(rootProject == project) {
       rootProject.plugins.apply ReleasePlugin
+      rootProject.plugins.apply StacksVersionToFilePlugin
     } else {
       warn 'stacks.release plugin must be applied only to root project'
       rootProject.pluginManager.apply StacksReleasePlugin
