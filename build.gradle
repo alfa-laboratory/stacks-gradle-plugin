@@ -9,6 +9,7 @@ buildscript {
   }
   dependencies {
     classpath 'com.netflix.nebula:nebula-plugin-plugin:6.1.1'
+    classpath 'com.netflix.nebula:nebula-release-plugin:6.2.0'
     classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.6.0'
     classpath 'com.netflix.nebula:nebula-dependency-recommender:5.1.0'
   }
@@ -60,7 +61,7 @@ dependencies {
   compile 'com.netflix.nebula:gradle-extra-configurations-plugin:3.2.0'
   compile 'com.netflix.nebula:gradle-info-plugin:3.6.0'
   compile 'com.netflix.nebula:nebula-publishing-plugin:5.1.5'
-  compile 'com.netflix.nebula:nebula-release-plugin:6.1.1'
+  compile 'com.netflix.nebula:nebula-release-plugin:6.2.0'
 
   compile "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
   compile 'org.jfrog.buildinfo:build-info-extractor-gradle:4.6.0'
@@ -113,14 +114,4 @@ pluginBundle {
       tags = ['springboot', 'plugin']
     }
   }
-}
-
-//TODO contribute to nebula.release and avoid this  code
-
-tasks.withType(ArtifactoryTask) { Task task ->
-  plugins.withType(JavaPlugin) {
-    task.dependsOn(project.tasks.build)
-  }
-
-  rootProject.tasks.postRelease.dependsOn(task)
 }

@@ -25,14 +25,5 @@ class StacksReleasePlugin extends StacksAbstractPlugin implements TaskContainerA
       warn 'stacks.release plugin must be applied only to root project'
       rootProject.pluginManager.apply StacksReleasePlugin
     }
-
-    taskContainer.withType(ArtifactoryTask) { Task task ->
-      pluginContainer.withType(LifecycleBasePlugin) {
-        task.dependsOn(project.tasks.build)
-      }
-
-      rootProject.tasks.postRelease.dependsOn(task)
-    }
-
   }
 }
