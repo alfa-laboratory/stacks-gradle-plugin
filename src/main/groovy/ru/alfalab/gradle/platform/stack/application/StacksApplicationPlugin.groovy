@@ -3,6 +3,7 @@ package ru.alfalab.gradle.platform.stack.application
 import groovy.transform.CompileStatic
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksProgramLanguagePlugin
+import ru.alfalab.gradle.platform.stack.dependencies.StacksDependenciesPlugin
 
 /**
  * @author tolkv
@@ -18,6 +19,7 @@ class StacksApplicationPlugin extends StacksAbstractPlugin {
       apply 'org.springframework.boot'
       apply StacksApplicationSpringBootTaskPlugin
       apply StacksApplicationSpringBootPublishingPlugin
+      apply StacksDependenciesPlugin
     }
   }
 
