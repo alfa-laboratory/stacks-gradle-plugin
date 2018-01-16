@@ -116,6 +116,11 @@ Add generic dependencies like lombok
 ### How to use
 
     apply plugin: 'stacks.dependencies'
+    
+Resolve spring boot dependencies version according next order
+
+1. from `stacks.spring.bootVersion`
+2. from `ext.springBootVersion` if `stacks.spring.bootVersion` not set     
 
 ### Extension 
 
