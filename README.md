@@ -110,7 +110,7 @@ Customise default publish repositories
      stacks {
         repositories {
           snapshot 'libs-snapshot-local'
-          releases 'libs-release-local'
+          release 'libs-release-local'
         }
      }
     
