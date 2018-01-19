@@ -19,7 +19,7 @@ class StacksVersionToFilePlugin extends StacksAbstractPlugin implements TaskCont
   @Override
   void applyPlugin() {
     rootProject.with { root ->
-      def createProjectVersionFileTask = root.tasks.create('stacksProjectVersionFileCreateTask', StacksVersionToFileTask)
+      def createProjectVersionFileTask = root.tasks.maybeCreate('stacksProjectVersionFileCreateTask', StacksVersionToFileTask)
       plugins.withType(LifecycleBasePlugin) {
         root.tasks.findByName('build').dependsOn(createProjectVersionFileTask)
       }

@@ -25,7 +25,7 @@ class StacksReleasePluginProjectSpec extends StacksSimpleIntegrationSpec {
         task checkRelease() {
           dependsOn build
           doLast {
-            logger.quiet 'should apply stacks.release plugin to rootProject='+rootProject.pluginManager.hasPlugin('stacks.release')
+            logger.quiet 'should apply stacks.release plugin='+( rootProject.pluginManager.hasPlugin('nebula.release') && rootProject.pluginManager.hasPlugin('stacks.project.version-to-file') )
           }
         }     
         """.stripIndent()
@@ -35,8 +35,7 @@ class StacksReleasePluginProjectSpec extends StacksSimpleIntegrationSpec {
 
     then:
       runResult.wasExecuted('stacksProjectVersionFileCreateTask')
-      runResult.standardOutput.contains('stacks.release plugin must be applied only to root project')
-      runResult.standardOutput.contains('should apply stacks.release plugin to rootProject=true')
+      runResult.standardOutput.contains('should apply stacks.release plugin=true')
   }
 
   def 'should not warn if apply release plugin only to root project'() {
