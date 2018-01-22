@@ -14,9 +14,9 @@ class StacksReleasePluginIntegSpec extends StacksGitIntegrationSpec {
     expect:
       def result = runTasksSuccessfully('snapshot')
 
-      println result.standardOutput
-      println result.standardError
       result.wasExecuted('artifactoryPublish')
+      result.wasExecuted('stacksProjectVersionFileCreateTask')
+      file('build/project-version').text == '0.1.0-SNAPSHOT'
   }
 
   @Override

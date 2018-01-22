@@ -1,6 +1,9 @@
 package ru.alfalab.gradle.platform.stack.base
 
 import groovy.transform.CompileStatic
+import org.gradle.BuildAdapter
+import org.gradle.BuildResult
+import org.gradle.api.Project
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -18,12 +21,26 @@ class StacksVersionToFilePlugin extends StacksAbstractPlugin implements TaskCont
 
   @Override
   void applyPlugin() {
-    rootProject.with { root ->
-      def createProjectVersionFileTask = root.tasks.maybeCreate('stacksProjectVersionFileCreateTask', StacksVersionToFileTask)
-      plugins.withType(LifecycleBasePlugin) {
-        root.tasks.findByName('build').dependsOn(createProjectVersionFileTask)
+    def createProjectVersionFileTask = rootProject.tasks.maybeCreate('stacksProjectVersionFileCreateTask', StacksVersionToFileTask)
+
+    //Add listener to write to file in any case
+    gradle.addBuildListener(new BuildAdapter() {
+      @Override
+      void buildFinished(BuildResult result) {
+        def projectVersionFile = new File(project.buildDir, 'project-version')
+        if (!projectVersionFile.exists()) {
+          projectVersionFile.getParentFile()?.mkdirs()
+          projectVersionFile.createNewFile()
+        }
+        projectVersionFile.text = result.gradle.rootProject.version.toString()
       }
+    })
+
+    //support old style task, can be call directly
+    allprojects { Project p ->
+      p.tasks.findByName('build')?.dependsOn(createProjectVersionFileTask)
     }
 
   }
+
 }
