@@ -18,6 +18,17 @@ class ConfigurePublishRepositoriesSpec extends StacksSimpleIntegrationSpec {
       result.standardOutput.contains('mysnapshto')
   }
 
+  def 'should configure snapshot publish repository for -dev version'() {
+    given:
+      configureForVersion('0.4.0-dev.0.uncommitted+cc1530d')
+    when:
+      def result = runTasksSuccessfully('snapshot', 'showRepo')
+
+    then:
+      result.wasExecuted('artifactoryPublish')
+      result.standardOutput.contains('mysnapshto')
+  }
+
   def 'should configure release publish repository'() {
     given:
       configureForVersion('1.0.0')

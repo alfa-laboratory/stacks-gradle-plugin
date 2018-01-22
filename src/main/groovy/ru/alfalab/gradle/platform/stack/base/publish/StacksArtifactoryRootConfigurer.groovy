@@ -15,7 +15,7 @@ class StacksArtifactoryRootConfigurer {
     this.stacksPublishingExtension = publishing
 
     String resolvedContextUrl = clientConfig.publisher.contextUrl ? clientConfig.publisher.contextUrl : project.findProperty('artifactory_contextUrl')
-    String resolvedRepoKey = project.version.toString().contains('SNAPSHOT') ? repositories.snapshot : repositories.release
+    String resolvedRepoKey = isDevelopmentVersion() ? repositories.snapshot : repositories.release
     String resolvedUser = clientConfig.publisher.username ? clientConfig.publisher.username : project.findProperty('artifactory_user')
     String resolvedPassword = clientConfig.publisher.password ? clientConfig.publisher.password : project.findProperty('artifactory_password')
 
@@ -40,13 +40,10 @@ class StacksArtifactoryRootConfigurer {
         password = resolvedPassword
       }
 
-//      defaults {
-//        publications('nebula')
-//        publishIvy = false
-//        properties {
-//          nebula commonProperties, '*:*:*:*@*'
-//        }
-//      }
     }
+  }
+
+  private boolean isDevelopmentVersion() {
+    project.version.toString().contains('SNAPSHOT') || project.version.toString().contains('-dev')
   }
 }
