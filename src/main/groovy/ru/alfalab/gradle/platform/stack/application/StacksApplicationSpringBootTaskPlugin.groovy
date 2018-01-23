@@ -3,7 +3,6 @@ package ru.alfalab.gradle.platform.stack.application
 import groovy.transform.CompileStatic
 import nebula.plugin.info.InfoBrokerPlugin
 import org.gradle.api.Action
-import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.PluginContainer
@@ -18,7 +17,6 @@ import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksExtension
-import ru.alfalab.gradle.platform.stack.base.StacksProgramLanguagePlugin
 
 /**
  * @author tolkv

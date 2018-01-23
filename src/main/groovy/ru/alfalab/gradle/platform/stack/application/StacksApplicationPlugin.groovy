@@ -2,7 +2,8 @@ package ru.alfalab.gradle.platform.stack.application
 
 import groovy.transform.CompileStatic
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
-import ru.alfalab.gradle.platform.stack.base.StacksProgramLanguagePlugin
+import ru.alfalab.gradle.platform.stack.base.StacksGenericProjectPlugin
+import ru.alfalab.gradle.platform.stack.base.StacksProgramLanguageGroovyPlugin
 import ru.alfalab.gradle.platform.stack.dependencies.StacksDependenciesPlugin
 
 /**
@@ -15,7 +16,8 @@ class StacksApplicationPlugin extends StacksAbstractPlugin {
   @Override
   void applyPlugin() {
     pluginManager.with {
-      apply StacksProgramLanguagePlugin
+      apply StacksGenericProjectPlugin
+      apply StacksProgramLanguageGroovyPlugin
       apply 'org.springframework.boot'
       apply StacksApplicationSpringBootTaskPlugin
       apply StacksApplicationSpringBootPublishingPlugin

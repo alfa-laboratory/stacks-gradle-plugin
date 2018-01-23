@@ -12,7 +12,7 @@ class GroovyDocTaskProcessorSpec extends ProjectSpec {
   def 'should configure groovydocJar tasks'() {
     when:
     project.apply plugin: 'groovy'
-    project.apply plugin: 'stacks.lang'
+    project.apply plugin: 'stacks.lang.groovy'
     project.configure(project) {
       group = 'mygroup'
     }

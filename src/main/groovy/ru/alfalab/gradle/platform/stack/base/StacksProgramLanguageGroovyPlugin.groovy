@@ -8,21 +8,15 @@ import org.gradle.api.plugins.quality.CodeNarcPlugin
  * @version 21/12/2017
  */
 @CompileStatic
-class StacksProgramLanguagePlugin extends StacksAbstractPlugin {
+class StacksProgramLanguageGroovyPlugin extends StacksAbstractPlugin {
 
   @Override
   void applyPlugin() {
     pluginManager.with {
-      apply StacksProjectInformationPlugin
+      apply StacksGenericProjectPlugin
       apply StacksPublicationPlugin
 
       apply 'groovy'
-      apply 'nebula.javadoc-jar'
-      apply 'nebula.source-jar'
-      apply 'nebula.optional-base'
-      apply 'nebula.dependency-lock'
-      apply 'nebula.dependency-recommender'
-      apply 'nebula.integtest'
 
       apply StacksProgramLanguageGroovydocPlugin
       apply StacksProgramLanguageGroovydocPublishingPlugin

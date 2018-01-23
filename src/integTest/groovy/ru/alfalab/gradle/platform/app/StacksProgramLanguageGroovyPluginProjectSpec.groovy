@@ -1,18 +1,16 @@
 package ru.alfalab.gradle.platform.app
 
 import nebula.test.ProjectSpec
-import org.gradle.api.tasks.javadoc.Groovydoc
-import ru.alfalab.gradle.platform.tests.base.StacksSimpleIntegrationSpec
 
 /**
  * @author tolkv
  * @version 22/12/2017
  */
-class StacksProgramLanguagePluginProjectSpec extends ProjectSpec {
+class StacksProgramLanguageGroovyPluginProjectSpec extends ProjectSpec {
 
   def 'should not configure codenarc plugin if codenarc.xml doest not exist'() {
     when:
-      project.apply plugin: 'stacks.lang'
+      project.apply plugin: 'stacks.lang.groovy'
 
     then:
       noExceptionThrown()
@@ -26,7 +24,7 @@ class StacksProgramLanguagePluginProjectSpec extends ProjectSpec {
       def file = file('config/codenarc/codenarc.xml')
 
     when:
-      project.apply plugin: 'stacks.lang'
+      project.apply plugin: 'stacks.lang.groovy'
 
     then:
       file.exists()
