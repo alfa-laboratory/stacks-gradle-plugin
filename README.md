@@ -2,7 +2,7 @@
 
 Plugins for implement next process:
 
-* apply one of plugin – `stacks.app`, `stacks.doc`, `stacks.lib`
+* apply one of plugin – `stacks.app.spring-boot`, `stacks.doc`, `stacks.lib`
 * consume meta information about project from artifactory. All properties (meta informatin in artifactory) are exporting after plugin above was applied
 * use properties for search and construct your own pipeline process, including build,verify,audit,reporting,deploy,monitoring,etc stages
 
@@ -12,7 +12,7 @@ See plugins description for more information
 
 # General Plugins
 
-## Plugin `stacks.app`
+## Plugin `stacks.app.spring-boot`
 
 Apply this plugin to project or subproject which contained a deployable Spring Boot Application
 
@@ -40,7 +40,7 @@ Export additional info to `/info` endpoint in app. See `spring-boot-actuator`
         title = 'test-project'
       }
     }
-    apply plugin: 'stacks.app'
+    apply plugin: 'stacks.app.spring-boot'
 
 ### Extension 
 
