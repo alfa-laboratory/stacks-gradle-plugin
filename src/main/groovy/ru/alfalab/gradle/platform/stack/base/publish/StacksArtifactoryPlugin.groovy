@@ -39,7 +39,7 @@ class StacksArtifactoryPlugin extends StacksAbstractPlugin implements TaskContai
     }
 
     afterEvaluate {
-      ArtifactoryPluginConvention artifactoryPluginConvention = rootProject.convention.plugins.get('artifactory') as ArtifactoryPluginConvention
+      ArtifactoryPluginConvention artifactoryPluginConvention = rootProject.convention.findPlugin(ArtifactoryPluginConvention)
       StacksPublishingConfiguration publishing = extensions.findByType(StacksExtension)?.publishing
       artifactiryRootConfigurer.configure artifactoryPluginConvention, publishing
 
