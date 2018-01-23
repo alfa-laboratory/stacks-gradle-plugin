@@ -16,7 +16,6 @@ class StacksApplicationPlugin extends StacksAbstractPlugin {
   @Override
   void applyPlugin() {
     pluginManager.with {
-      apply StacksGenericProjectPlugin
       apply StacksProgramLanguageGroovyPlugin
       apply 'org.springframework.boot'
       apply StacksApplicationSpringBootTaskPlugin
