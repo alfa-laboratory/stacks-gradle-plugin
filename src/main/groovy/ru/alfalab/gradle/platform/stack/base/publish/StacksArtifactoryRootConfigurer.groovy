@@ -27,11 +27,6 @@ class StacksArtifactoryRootConfigurer {
     project.logger.info "platform.deployment.app-name: ${project.name}"
     project.logger.info "version                     : ${project.name}"
 
-    def commonProperties = [
-        'platform': true,
-        'version' : project.version
-    ]
-
     publish {
       contextUrl = resolvedContextUrl
       repository {
