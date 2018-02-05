@@ -1,6 +1,5 @@
 package ru.alfalab.gradle.platform.stack.base.publish
 
-import groovy.transform.Canonical
 import org.gradle.api.Project
 
 /**
@@ -13,10 +12,14 @@ class StacksPublishingConfiguration {
    */
   private Project                              project
   private StacksExtensionRepositoriesContainer repos
+  private Set<String>                          publicationsForExport
+  private Set<String>                          archivesForExport
 
   StacksPublishingConfiguration(Project project) {
     this.project = project
     this.repos = new StacksExtensionRepositoriesContainer(project)
+    this.publicationsForExport = ['nebula']
+    this.archivesForExport = ['archives']
   }
 
   /**
@@ -31,21 +34,47 @@ class StacksPublishingConfiguration {
    * repositories {
    *   snapshot 'my-snapshot-repo'
    *   releases 'my-snapshot-repo'
-   * }</pre></code>
+   * }</code></pre>
    *
    * <pre><code>
    * repositories {
    *   useLibsRepositories()
-   * }</pre></code>
+   * }</code></pre>
    *
    * <pre><code>
    * repositories {
    *   usePluginsRepositories()
-   * }</pre></code>
+   * }</code></pre>
    * @param config #RepositoriesContainer
    */
   void repositories(@DelegatesTo(StacksExtensionRepositoriesContainer) final Closure config) {
     repos.with config
+  }
+
+  /**
+   * Add publications for export to artifactory
+   * {@code publications 'nebula', 'mubuplication' }
+   * @param publicationNames publication names var arg
+   */
+  void publications(String... publicationNames) {
+    this.publicationsForExport.addAll(publicationNames)
+  }
+
+  void clearPublications() {
+    this.publicationsForExport.clear()
+  }
+
+  /**
+   * Add publications for export to artifactory
+   * {@code publications 'nebula', 'mubuplication' }
+   * @param publicationNames publication names var arg
+   */
+  void archives(String... names) {
+    this.archivesForExport.addAll(names)
+  }
+
+  void clearArchives() {
+    this.archivesForExport.clear()
   }
 
   StacksExtensionRepositoriesContainer getRepositories() {
