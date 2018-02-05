@@ -6,7 +6,6 @@ import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 import io.spring.gradle.dependencymanagement.dsl.ImportsHandler
 import org.gradle.api.Action
 import org.gradle.api.plugins.ExtensionContainer
-import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
 import org.springframework.boot.gradle.plugin.SpringBootPlugin
@@ -16,15 +15,16 @@ import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksExtension
 
-import static ru.alfalab.gradle.platform.stack.spring.StacksSpringConfiguration.DEFAULT_SPRING_BOOT_VERSION
+import static ru.alfalab.gradle.platform.stack.spring.StacksSpringConfiguration.DEFAULT_SPRING_CLOUD_VERSION
 
 /**
  * @author tolkv
  * @version 20/12/2017
  */
 @CompileStatic
-class StacksSpringBootDependenciesPlugin extends StacksAbstractPlugin implements PluginContainerAware, ExtensionContainerAware {
+class StacksSpringCloudDependenciesPlugin extends StacksAbstractPlugin implements PluginContainerAware, ExtensionContainerAware, TaskContainerAware {
   PluginContainer    pluginContainer
+  TaskContainer      taskContainer
   ExtensionContainer extensionContainer
 
   @Override
@@ -36,23 +36,11 @@ class StacksSpringBootDependenciesPlugin extends StacksAbstractPlugin implements
 
           extensionContainer.configure(DependencyManagementExtension) { DependencyManagementExtension extension ->
             def springConfiguration = extensionContainer.findByType(StacksExtension).springConfig
-            def bootVersionProvider = springConfiguration.bootVersionProvider
-
-            def type = extensionContainer.findByType(ExtraPropertiesExtension)
-            def springBootVersionFromExt = type.getProperties().get('springBootVersion')
-            def springBootVersionFromStacksExtension = bootVersionProvider.getOrElse(DEFAULT_SPRING_BOOT_VERSION)
-
-            def resolvedSpringBootVersion
-
-            if (springBootVersionFromExt && springBootVersionFromStacksExtension == DEFAULT_SPRING_BOOT_VERSION) {
-              resolvedSpringBootVersion = springBootVersionFromExt
-            } else {
-              resolvedSpringBootVersion = springBootVersionFromStacksExtension
-            }
+            def resolvedSpringCloudVersion = springConfiguration.cloudVersionProvider.getOrElse(DEFAULT_SPRING_CLOUD_VERSION)
 
             extension.imports(
                 { ImportsHandler importsHandler ->
-                  importsHandler.mavenBom("org.springframework.boot:spring-boot-dependencies:${resolvedSpringBootVersion}")
+                  importsHandler.mavenBom "org.springframework.cloud:spring-cloud-dependencies:${resolvedSpringCloudVersion}"
                 } as Action<ImportsHandler>)
           }
 
