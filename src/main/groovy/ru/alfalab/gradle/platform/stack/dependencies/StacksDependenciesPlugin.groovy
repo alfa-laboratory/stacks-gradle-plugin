@@ -3,6 +3,7 @@ package ru.alfalab.gradle.platform.stack.dependencies
 import groovy.transform.CompileStatic
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin
 import org.gradle.api.plugins.PluginContainer
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.application.StacksSpringBootDependenciesPlugin
 import ru.alfalab.gradle.platform.stack.application.StacksSpringCloudDependenciesPlugin
@@ -19,7 +20,7 @@ class StacksDependenciesPlugin extends StacksAbstractPlugin implements PluginCon
   @Override
   void applyPlugin() {
     pluginContainer.apply DependencyManagementPlugin
-    if (pluginContainer.hasPlugin('org.springframework.boot')) {
+    pluginContainer.withType(SpringBootPlugin) {
       pluginContainer.apply StacksSpringBootDependenciesPlugin
       pluginContainer.apply StacksSpringCloudDependenciesPlugin
     }
