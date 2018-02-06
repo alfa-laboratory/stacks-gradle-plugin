@@ -158,7 +158,8 @@ Resolve spring boot dependencies version according next order
 
      stacks {
         spring {
-          bootVersion = '1.5.9.RELEASE' //<-- default value
+          cloudVersion 'Edgware.SR1'  //<-- default value
+          bootVersion '1.5.9.RELEASE' //<-- default value
         }    
      }
 
@@ -222,5 +223,21 @@ Also extract all information to artifacts metadata in artifactory (need stacks.a
 
     apply plugin: 'stacks.info'
     
-### Extension
 
+## Plugin `stacks.lang.groovy`
+
+Configure groovy and java compile tasks, environment, annotation processors configuration (mapstruct and lombok), tasks for export javadoc and groovy doc. Configure publish logic
+Additional – configure codenarc for read config/codenarc/codenarc.xml file and apply if it exists
+
+### Mission
+
+Simplify project configuration for groovy or java development process. Provide artifacts with docs for developed artifacts by default
+Reduce boilerplate and configure APT config
+Add dependencyManagement plugin for manage dependencies
+Apply `stacks.dependencies` plugin
+
+### How to use
+
+    apply plugin: 'stacks.lang.groovy'
+   
+ 
