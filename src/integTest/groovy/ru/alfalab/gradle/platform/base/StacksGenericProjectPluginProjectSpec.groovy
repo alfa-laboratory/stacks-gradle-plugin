@@ -6,6 +6,8 @@ import nebula.plugin.info.InfoPlugin
 import nebula.plugin.publishing.publications.JavadocJarPlugin
 import nebula.plugin.publishing.publications.SourceJarPlugin
 import nebula.test.PluginProjectSpec
+import org.gradle.api.tasks.compile.GroovyCompile
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -34,6 +36,14 @@ class StacksGenericProjectPluginProjectSpec extends PluginProjectSpec {
 
       project.tasks.withType(Javadoc).every { (!it.failOnError) }
       project.tasks.withType(Test).every { it.testLogging.exceptionFormat == TestExceptionFormat.FULL }
+      project.tasks.withType(JavaCompile).every { it.options.encoding == 'UTF-8' }
+      project.tasks.withType(JavaCompile).every {
+        it.options.compilerArgs == [
+            '-Amapstruct.defaultComponentModel=spring',
+            '-Amapstruct.unmappedTargetPolicy=IGNORE'
+        ]
+      }
+      project.tasks.withType(GroovyCompile).every { it.options.encoding == 'UTF-8' }
 
   }
 

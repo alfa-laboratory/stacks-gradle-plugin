@@ -2,6 +2,7 @@ package ru.alfalab.gradle.platform.stack.base
 
 import groovy.transform.CompileStatic
 import org.gradle.api.plugins.quality.CodeNarcPlugin
+import ru.alfalab.gradle.platform.stack.dependencies.StacksDependenciesPlugin
 
 /**
  * @author tolkv
@@ -17,6 +18,7 @@ class StacksProgramLanguageGroovyPlugin extends StacksAbstractPlugin {
 
       apply 'groovy'
 
+      apply StacksDependenciesPlugin
       apply StacksProgramLanguageGroovydocPlugin
       apply StacksProgramLanguageGroovydocPublishingPlugin
     }
