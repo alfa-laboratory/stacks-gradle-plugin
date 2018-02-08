@@ -37,7 +37,8 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
       String classifier = config.classifierProvider.getOrElse('app')
       String title = config.titleProvider.getOrElse(rootProject.name)
       String description = project.description ? project.description : rootProject.description
-      String deploymentId = format('%s:%s:%s', project.group, project.name, classifier)
+      def artifactNameInDeploymentId = rootProject.name != project.name ? rootProject.name + '/' + project.name : project.name
+      String deploymentId = format('%s:%s:%s', rootProject.group, "${artifactNameInDeploymentId}", classifier)
 
       taskContainer.withType(RepackageTask) { RepackageTask repackageTask ->
         t.dependsOn repackageTask

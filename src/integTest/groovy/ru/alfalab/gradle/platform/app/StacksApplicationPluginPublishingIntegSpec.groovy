@@ -52,7 +52,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=api') &&
-            request.url.contains('platform.deployment.id=ru.alfalab.test%3Aapp0%3Aapp') &&
+            request.url.contains('platform.deployment.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aapp') &&
             request.url.contains('platform.deployment.app-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.artifact-type=service')) {
