@@ -34,7 +34,9 @@ class StacksProjectInformationPlugin extends StacksAbstractPlugin implements Tas
           if (task.properties) {
             debug "add properties[$artifactMetaProperties] to task[$task.name]"
             artifactMetaProperties.each {
-              task.properties.put(it.key, it.value)
+              if(it.value) {
+                task.properties.put(it.key, it.value)
+              }
             }
           }
         }
