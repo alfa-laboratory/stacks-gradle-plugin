@@ -35,7 +35,9 @@ class StacksProjectInformationPlugin extends StacksAbstractPlugin implements Tas
             debug "add properties[$artifactMetaProperties] to task[$task.name]"
             artifactMetaProperties.each {
               if(it.value) {
-                task.properties.put(it.key, it.value)
+                //because ; — is a separator for property in artifactory api
+                def escapedValue = it.value.replace(';', '|')
+                task.properties.put(it.key, escapedValue)
               }
             }
           }
