@@ -36,7 +36,7 @@ class StacksProjectInformationPlugin extends StacksAbstractPlugin implements Tas
             artifactMetaProperties.each {
               if(it.value) {
                 //because ; — is a separator for property in artifactory api
-                def escapedValue = it.value.replace(';', '|')
+                def escapedValue = it.value.replace(';', '-')
                 task.properties.put(it.key, escapedValue)
               }
             }
