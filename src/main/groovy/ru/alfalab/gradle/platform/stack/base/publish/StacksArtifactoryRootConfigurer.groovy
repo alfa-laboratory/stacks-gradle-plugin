@@ -27,14 +27,16 @@ class StacksArtifactoryRootConfigurer {
     project.logger.info "platform.deployment.app-name: ${project.name}"
     project.logger.info "version                     : ${project.name}"
 
-    publish {
-      contextUrl = resolvedContextUrl
-      repository {
-        repoKey = resolvedRepoKey
-        username = resolvedUser
-        password = resolvedPassword
-      }
+    artifactory {
+      publish {
+        contextUrl = resolvedContextUrl
+        repository {
+          repoKey = resolvedRepoKey
+          username = resolvedUser
+          password = resolvedPassword
+        }
 
+      }
     }
   }
 
