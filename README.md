@@ -108,25 +108,31 @@ or apply `stacks.release` plugin and use
 Customise default publish repositories
      
      stacks {
-        repositories {
-          snapshot 'libs-snapshot-local'
-          release 'libs-release-local'
+        publishing {
+            repositories {
+                snapshot 'libs-snapshot-local'
+                release 'libs-release-local'
+            }
         }
      }
     
 use libs layout `libs-release-local` and `libs-snapshot-local`
         
      stacks {
-        repositories {
-          useLibsRepositories()
+        publishing {
+            repositories {
+              useLibsRepositories()
+            }
         }
      }
 
 use plugins layout `plugins-release-local` and `plugins-snapshot-local`
       
      stacks {
-        repositories {
-          usePluginsRepositories()
+        publishing {
+            repositories {
+              usePluginsRepositories()
+            }
         }    
      }
      
