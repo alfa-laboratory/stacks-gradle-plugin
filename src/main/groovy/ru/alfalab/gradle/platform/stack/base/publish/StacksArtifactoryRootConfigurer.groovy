@@ -35,7 +35,14 @@ class StacksArtifactoryRootConfigurer {
           username = resolvedUser
           password = resolvedPassword
         }
+      }
 
+      resolve {
+        contextUrl = resolvedContextUrl
+        repository {
+          username = resolvedUser
+          password = resolvedPassword
+        }
       }
     }
   }
