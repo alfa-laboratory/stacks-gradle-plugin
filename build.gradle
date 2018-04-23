@@ -1,4 +1,15 @@
 buildscript {
+  ext {
+    nebula_project_plugin = '3.4.0'
+    gradle_contacts_plugin = '3.0.1'
+    gradle_dependency_lock_plugin = '5.0.0'
+    nebula_dependency_recommender = '5.2.0'
+    gradle_extra_configurations_plugin = '3.3.0'
+    gradle_info_plugin = '3.7.1'
+    nebula_publishing_plugin = '7.0.6'
+    nebula_release_plugin = '6.3.2'
+    jfrogExtractorVersion = '4.7.1'
+  }
   repositories {
     jcenter()
     maven {
@@ -8,7 +19,7 @@ buildscript {
   dependencies {
     classpath 'com.netflix.nebula:nebula-plugin-plugin:6.1.1'
     classpath 'com.netflix.nebula:nebula-release-plugin:6.2.0'
-    classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.6.0'
+    classpath "org.jfrog.buildinfo:build-info-extractor-gradle:${jfrogExtractorVersion}"
     classpath 'com.netflix.nebula:nebula-dependency-recommender:5.1.0'
   }
 }
@@ -62,7 +73,7 @@ dependencies {
   compile 'com.netflix.nebula:nebula-release-plugin:6.2.0'
 
   compile "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-  compile 'org.jfrog.buildinfo:build-info-extractor-gradle:4.6.0'
+  compile "org.jfrog.buildinfo:build-info-extractor-gradle:${jfrogExtractorVersion}"
 
   compile('com.github.jruby-gradle:jruby-gradle-plugin:1.5.0') {
     exclude group: 'org.eclipse.jetty'

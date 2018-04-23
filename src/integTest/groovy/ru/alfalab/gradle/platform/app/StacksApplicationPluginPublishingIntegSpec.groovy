@@ -160,6 +160,13 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
         
         artifactory {
           contextUrl = 'http://localhost:${wireMockRule.port()}'
+          publish {
+            defaults {
+              properties {
+                nebula ''
+              }
+            }
+          }
         }
         task snapshot { }
         task 'final'() { }
