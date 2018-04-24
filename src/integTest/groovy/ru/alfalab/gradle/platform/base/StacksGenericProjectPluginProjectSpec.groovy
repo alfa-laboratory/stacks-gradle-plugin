@@ -12,7 +12,7 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import ru.alfalab.gradle.platform.stack.base.StacksGenericProjectPlugin
-import ru.alfalab.gradle.platform.stack.base.StacksPublicationPlugin
+import ru.alfalab.gradle.platform.stack.base.publish.StacksPublicationPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksReleasePlugin
 
 /**

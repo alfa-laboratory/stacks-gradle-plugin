@@ -7,12 +7,15 @@ import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import com.github.tomakehurst.wiremock.matching.MatchResult
+import com.github.tomakehurst.wiremock.matching.RequestPattern
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import com.github.tomakehurst.wiremock.matching.UrlPathPattern
 import com.github.tomakehurst.wiremock.matching.ValueMatcher
 import org.junit.Rule
 import ru.alfalab.gradle.platform.tests.base.StacksGitIntegrationSpec
 import ru.alfalab.gradle.platform.tests.base.StacksSimpleIntegrationSpec
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.*
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 /**
  * @author tolkv
@@ -20,7 +23,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
  */
 class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpec {
   public static final String       DEFAULT_GROUP = 'ru.alfalab.test'
-  @Rule               WireMockRule wireMockRule  = new WireMockRule()
+  @Rule               WireMockRule wireMockRule  = new WireMockRule(options().dynamicPort(), true)
 
   def setup() {
     createAppSubproject('app0')
@@ -144,6 +147,29 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
     then:
       successfully.wasExecuted('app0:build')
       successfully.wasExecuted('app0:bootRepackage')
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/api/build')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-app.jar.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-app.jar.*platform.label=api.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-app.jar.*platform.deployment.id=.*artifacts.*')))
+
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-javadoc.jar.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-javadoc.jar.*platform.label=doc.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-javadoc.jar.*platform.artifact-type=javadoc.*')))
+
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-sources.jar.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-sources.jar.*platform.artifact-type=sourcecode.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-sources.jar.*platform.label=source.*')))
+
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-groovydoc.jar.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-groovydoc.jar.*fuck.*')))
+
+      wireMockRule.findUnmatchedRequests()?.requests?.forEach {
+        println 'not found:'
+        println '-' + it.url
+      }
+
+//      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-groovydoc.jar.*')))
+
   }
 
   def configureForVersion(String version) {
@@ -156,17 +182,21 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
         
         project(':app0') {
           apply plugin: 'stacks.artifactory'
+          artifactoryPublish {
+                properties {
+                  all '*:*:*:groovydoc@*', 'platform.fuck':'fuck'
+                }
+          }
+
+//          stacks {
+//            application {
+//              classifier = 'classifier'
+//            }
+//          }          
         }
         
         artifactory {
           contextUrl = 'http://localhost:${wireMockRule.port()}'
-          publish {
-            defaults {
-              properties {
-                nebula ''
-              }
-            }
-          }
         }
         task snapshot { }
         task 'final'() { }

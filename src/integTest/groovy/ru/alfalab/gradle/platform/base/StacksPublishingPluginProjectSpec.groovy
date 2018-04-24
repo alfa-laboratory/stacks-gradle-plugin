@@ -1,9 +1,8 @@
 package ru.alfalab.gradle.platform.base
 
 import nebula.test.ProjectSpec
-import ru.alfalab.gradle.platform.stack.base.StacksBasePlugin
 import ru.alfalab.gradle.platform.stack.base.StacksConvention
-import ru.alfalab.gradle.platform.stack.base.StacksPublicationPlugin
+import ru.alfalab.gradle.platform.stack.base.publish.StacksPublicationPlugin
 
 /**
  * @author tolkv

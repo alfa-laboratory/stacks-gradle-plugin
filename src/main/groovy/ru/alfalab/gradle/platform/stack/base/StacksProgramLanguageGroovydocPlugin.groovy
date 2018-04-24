@@ -7,6 +7,8 @@ import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.tasks.Jar
+import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
+import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import ru.alfalab.gradle.platform.stack.api.ExtensionContainerAware
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
@@ -17,15 +19,16 @@ import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
  */
 @CompileStatic
 class StacksProgramLanguageGroovydocPlugin extends StacksAbstractPlugin implements PluginContainerAware, TaskContainerAware, ExtensionContainerAware{
-  ExtensionContainer extensionContainer
-  PluginContainer    pluginContainer
-  TaskContainer      taskContainer
+  public static final String             GROOVYDOC_JAR_TASK = 'groovydocJar'
+                      ExtensionContainer extensionContainer
+                      PluginContainer    pluginContainer
+                      TaskContainer      taskContainer
 
   @Override
   void applyPlugin() {
     taskContainer.withType(Groovydoc) { Groovydoc groovydocTask ->
 
-      Jar groovydocJarTask = taskContainer.maybeCreate('groovydocJar', Jar)
+      Jar groovydocJarTask = taskContainer.maybeCreate(GROOVYDOC_JAR_TASK, Jar)
 
       groovydocJarTask.with {
         dependsOn taskContainer.getByName('groovydoc')
@@ -35,5 +38,6 @@ class StacksProgramLanguageGroovydocPlugin extends StacksAbstractPlugin implemen
       }
 
     }
+
   }
 }

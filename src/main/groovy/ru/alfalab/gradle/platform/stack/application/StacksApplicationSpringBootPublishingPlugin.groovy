@@ -3,8 +3,8 @@ package ru.alfalab.gradle.platform.stack.application
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.plugins.ExtensionContainer
-import org.gradle.api.publish.PublicationContainer
-import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.publish.maven.tasks.GenerateMavenPom
 import org.gradle.api.tasks.TaskContainer
 import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
@@ -47,6 +47,9 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
         skip = false
       }
 
+      t.dependsOn tasks.withType(GenerateMavenPom)
+      t.dependsOn tasks.findByName('build')
+
       def commonProperties = [
           'platform.display-name'  : title,
           'platform.artifact.group': project.group?.toString(),
@@ -83,7 +86,7 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
 
       ArtifactoryPluginConvention artifactoryConvention = convention.findPlugin(ArtifactoryPluginConvention)
 
-      configureArtifactoryConventionForSpringBoot(artifactoryConvention)
+      configureArtifactoryConventionForSpringBoot(artifactoryConvention, t)
           .withAppClassifier(applicationClassifier)
           .withAppArtifactProperties(commonProperties + serviceProperties)
           .withGroovydocArtifactProperties(commonProperties + groovydocProperties)
@@ -93,21 +96,19 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
     }
   }
 
-  private static Map<String, String> filterNull(Map<String, String> properties) {
-    properties.findAll { it.value != null }
-  }
-
-
   void configureArtifactoryTaskWithPublicationsLazyInit(Action<ArtifactoryTask> closure) {
     plugins.withType(ArtifactoryPlugin) { ArtifactoryPlugin p ->
       debug 'configure publications and meta info for spring boot application project'
-      afterEvaluate {
-        extensionContainer.configure(PublishingExtension) { PublishingExtension publishingExtension ->
-          publishingExtension.publications { PublicationContainer publicationContainer ->
-            taskContainer.withType(ArtifactoryTask, closure)
-          }
-        }
+      plugins.withType(MavenPublishPlugin) {
+//        afterEvaluate {
+          taskContainer.withType(ArtifactoryTask, closure)
+//        }
       }
+
+//        extensionContainer.configure(PublishingExtension) { PublishingExtension publishingExtension ->
+//          publishingExtension.publications { PublicationContainer publicationContainer ->
+//          }
+//        }
     }
   }
 

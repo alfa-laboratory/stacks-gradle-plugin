@@ -27,7 +27,7 @@ class StacksProjectInformationPlugin extends StacksAbstractPlugin implements Tas
     pluginContainer.apply(InfoPlugin)
 
     addMetaInformationForArtifactoryTask { ArtifactoryTask task ->
-      afterEvaluate {
+//      afterEvaluate {
 
         project.plugins.withType(InfoBrokerPlugin) { InfoBrokerPlugin manifestPlugin ->
           def artifactMetaProperties = manifestPlugin.buildManifest()
@@ -43,7 +43,7 @@ class StacksProjectInformationPlugin extends StacksAbstractPlugin implements Tas
           }
         }
 
-      }
+//      }
 
     }
   }

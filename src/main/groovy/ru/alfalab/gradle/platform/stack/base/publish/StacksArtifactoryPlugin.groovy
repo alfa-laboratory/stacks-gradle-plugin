@@ -1,19 +1,14 @@
 package ru.alfalab.gradle.platform.stack.base.publish
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
-import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
-import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import ru.alfalab.gradle.platform.stack.api.ExtensionContainerAware
-import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksExtension
-import ru.alfalab.gradle.platform.stack.base.StacksPublicationPlugin
 
 /**
  * @author tolkv

@@ -1,9 +1,14 @@
 package ru.alfalab.gradle.platform.stack.application
 
+import org.jfrog.build.extractor.clientConfiguration.ArtifactSpec
+import org.jfrog.build.extractor.clientConfiguration.ArtifactSpecs
+import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
+import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 
 class ArtifactoryConventionSpringBootDynamicConfigurator {
   private ArtifactoryPluginConvention artifactoryConvention
+  private ArtifactoryTask             task
 
   private String              appClassifier = 'app'
   private Map<String, String> appArtifactProperties
@@ -12,14 +17,15 @@ class ArtifactoryConventionSpringBootDynamicConfigurator {
   private Map<String, String> sourcesArtifactProperties
 
   ArtifactoryConventionSpringBootDynamicConfigurator(
-      ArtifactoryPluginConvention artifactoryConvention) {
+      ArtifactoryPluginConvention artifactoryConvention, ArtifactoryTask task) {
     this.artifactoryConvention = artifactoryConvention
+    this.task = task
     this
   }
 
   static ArtifactoryConventionSpringBootDynamicConfigurator configureArtifactoryConventionForSpringBoot(
-      ArtifactoryPluginConvention convention) {
-    return new ArtifactoryConventionSpringBootDynamicConfigurator(convention)
+      ArtifactoryPluginConvention convention, ArtifactoryTask task) {
+    return new ArtifactoryConventionSpringBootDynamicConfigurator(convention, task)
   }
 
   ArtifactoryConventionSpringBootDynamicConfigurator withAppClassifier(String appClassifier) {
@@ -81,15 +87,52 @@ class ArtifactoryConventionSpringBootDynamicConfigurator {
         defaults {
           skip = false
           publications('nebula')
-          properties {
-            nebula appArtifactProperties, '*:*:*:' + appClassifier + '@*'
-            nebula groovydocArtifactProperties, '*:*:*:groovydoc@*'
-            nebula javadocArtifactProperties, '*:*:*:javadoc@*'
-            nebula sourcesArtifactProperties, '*:*:*:sources@*'
-          }
         }
       }
     }
+
+    task.skip = false
+    artifactoryConvention.project.publishing {
+      publications {
+        task.publications(nebula)
+      }
+    }
+
+    //TOOD super mega hack
+    task.doFirst {
+      ArtifactSpecs specs = task.artifactSpecs
+      def artifactSpecs = [
+          ArtifactSpec.builder()
+                      .artifactNotation('*:*:*:' + appClassifier + '@*')
+                      .configuration('nebula')
+                      .properties(appArtifactProperties)
+                      .build(),
+          ArtifactSpec.builder()
+                      .artifactNotation('*:*:*:groovydoc@*')
+                      .configuration('all')
+                      .properties(groovydocArtifactProperties)
+                      .build(),
+          ArtifactSpec.builder()
+                      .artifactNotation('*:*:*:javadoc@*')
+                      .configuration('nebula')
+                      .properties(javadocArtifactProperties)
+                      .build(),
+          ArtifactSpec.builder()
+                      .artifactNotation('*:*:*:sources@*')
+                      .configuration('nebula')
+                      .properties(sourcesArtifactProperties)
+                      .build()
+      ]
+
+      artifactSpecs.each { ArtifactSpec advancedSpec ->
+        if (!specs.contains(advancedSpec)) {
+          task.artifactSpecs.add(advancedSpec)
+        } else {
+          specs.findAll { it == advancedSpec }.each { it.properties.putAll(advancedSpec.properties) }
+        }
+      }
+    }
+
   }
 
 }

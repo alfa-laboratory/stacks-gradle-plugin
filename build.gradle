@@ -17,10 +17,17 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'com.netflix.nebula:nebula-plugin-plugin:6.1.1'
-    classpath 'com.netflix.nebula:nebula-release-plugin:6.2.0'
-    classpath "org.jfrog.buildinfo:build-info-extractor-gradle:${jfrogExtractorVersion}"
-    classpath 'com.netflix.nebula:nebula-dependency-recommender:5.1.0'
+    classpath 'com.gradle.publish:plugin-publish-plugin:0.9.10'
+    classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.7.1'
+
+    classpath "com.netflix.nebula:nebula-project-plugin:$nebula_project_plugin"
+    classpath "com.netflix.nebula:gradle-contacts-plugin:$gradle_contacts_plugin"
+    classpath "com.netflix.nebula:gradle-dependency-lock-plugin:$gradle_dependency_lock_plugin"
+    classpath "com.netflix.nebula:nebula-dependency-recommender:$nebula_dependency_recommender"
+    classpath "com.netflix.nebula:gradle-extra-configurations-plugin:$gradle_extra_configurations_plugin"
+    classpath "com.netflix.nebula:gradle-info-plugin:$gradle_info_plugin"
+    classpath "com.netflix.nebula:nebula-publishing-plugin:$nebula_publishing_plugin"
+    classpath "com.netflix.nebula:nebula-release-plugin:$nebula_release_plugin"
   }
 }
 
@@ -63,15 +70,16 @@ dependencies {
   compile gradleApi()
   compile 'org.codehaus.groovy:groovy-all:2.4.12'
 
-  compile 'com.netflix.nebula:nebula-project-plugin:3.4.0'
-  compile 'com.netflix.nebula:gradle-contacts-plugin:3.0.1'
-  compile 'com.netflix.nebula:gradle-dependency-lock-plugin:5.0.0'
-  compile 'com.netflix.nebula:nebula-dependency-recommender:5.1.0'
-  compile 'com.netflix.nebula:gradle-extra-configurations-plugin:3.2.0'
-  compile 'com.netflix.nebula:gradle-info-plugin:3.6.0'
-  compile 'com.netflix.nebula:nebula-publishing-plugin:5.1.5'
-  compile 'com.netflix.nebula:nebula-release-plugin:6.2.0'
+  compile "com.netflix.nebula:nebula-project-plugin:$nebula_project_plugin"
+  compile "com.netflix.nebula:gradle-contacts-plugin:$gradle_contacts_plugin"
+  compile "com.netflix.nebula:gradle-dependency-lock-plugin:$gradle_dependency_lock_plugin"
+  compile "com.netflix.nebula:nebula-dependency-recommender:$nebula_dependency_recommender"
+  compile "com.netflix.nebula:gradle-extra-configurations-plugin:$gradle_extra_configurations_plugin"
+  compile "com.netflix.nebula:gradle-info-plugin:$gradle_info_plugin"
+  compile "com.netflix.nebula:nebula-publishing-plugin:$nebula_publishing_plugin"
+  compile "com.netflix.nebula:nebula-release-plugin:$nebula_release_plugin"
 
+  compile "io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE"
   compile "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
   compile "org.jfrog.buildinfo:build-info-extractor-gradle:${jfrogExtractorVersion}"
 

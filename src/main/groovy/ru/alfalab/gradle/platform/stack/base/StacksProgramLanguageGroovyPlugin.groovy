@@ -16,6 +16,7 @@ class StacksProgramLanguageGroovyPlugin extends StacksAbstractPlugin {
     pluginManager.with {
       apply StacksGenericProjectPlugin
 
+      apply 'java'
       apply 'groovy'
 
       apply StacksDependenciesPlugin
