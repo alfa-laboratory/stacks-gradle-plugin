@@ -1,6 +1,5 @@
 package ru.alfalab.gradle.platform.app
 
-import ru.alfalab.gradle.platform.stack.base.StacksBasePlugin
 import ru.alfalab.gradle.platform.tests.base.StacksSimpleIntegrationSpec
 
 /**

@@ -1,10 +1,9 @@
 package ru.alfalab.gradle.platform.stack.base
 
-import groovy.transform.CompileStatic
 import nebula.plugin.publishing.publications.JavadocJarPlugin
 import nebula.plugin.publishing.publications.SourceJarPlugin
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
 import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -22,8 +21,11 @@ class StacksGenericProjectPlugin extends StacksAbstractPlugin {
   @Override
   void applyPlugin() {
     // Publishing
-    plugins.withType(JavaPlugin) {
+    plugins.withType(BasePlugin) {
       plugins.apply StacksPublicationPlugin
+    }
+
+    plugins.withType(JavaPlugin) {
       plugins.apply JavadocJarPlugin
       plugins.apply SourceJarPlugin
     }
@@ -85,11 +87,6 @@ class StacksGenericProjectPlugin extends StacksAbstractPlugin {
               t.publications(nebula)
             }
           }
-//          t.properties {
-//            nebula props, '*:*:*:' + 'app' + '@*'
-//            nebula props, '*:*:*:' + 'groovydoc' + '@*'
-//            nebula props, '*:*:*:' + 'javadoc' + '@*'
-//          }
         }
       }
     }
@@ -104,11 +101,6 @@ class StacksGenericProjectPlugin extends StacksAbstractPlugin {
               t.publications(nebula)
             }
           }
-//          t.properties {
-//            nebula props2, '*:*:*:' + 'sdf' + '@*'
-//            nebula props2, '*:*:*:' + 'groovydoc' + '@*'
-//            nebula props2, '*:*:*:' + 'javadoc' + '@*'
-//          }
         }
       }
     }

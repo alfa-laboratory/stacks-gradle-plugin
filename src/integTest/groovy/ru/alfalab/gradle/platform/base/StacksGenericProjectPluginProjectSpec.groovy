@@ -23,6 +23,7 @@ class StacksGenericProjectPluginProjectSpec extends PluginProjectSpec {
 
   def 'should apply all plugins [spec]'() {
     when:
+      project.apply plugin: 'java'
       project.apply plugin: StacksGenericProjectPlugin
 
     then:
@@ -45,6 +46,20 @@ class StacksGenericProjectPluginProjectSpec extends PluginProjectSpec {
       }
       project.tasks.withType(GroovyCompile).every { it.options.encoding == 'UTF-8' }
 
+  }
+
+  def 'should apply only plugins for base project [spec]'() {
+    when:
+      project.apply plugin: StacksGenericProjectPlugin
+
+    then:
+      project.plugins.hasPlugin(StacksPublicationPlugin)
+      !project.plugins.hasPlugin(JavadocJarPlugin)
+      !project.plugins.hasPlugin(SourceJarPlugin)
+      project.plugins.hasPlugin(InfoPlugin)
+      project.plugins.hasPlugin(ContactsPlugin)
+      project.plugins.hasPlugin(DependencyLockPlugin)
+      !project.plugins.hasPlugin(StacksReleasePlugin)
   }
 
   @Override
