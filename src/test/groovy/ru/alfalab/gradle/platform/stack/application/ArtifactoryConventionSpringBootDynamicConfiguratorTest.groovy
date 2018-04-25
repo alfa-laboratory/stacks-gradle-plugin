@@ -1,6 +1,7 @@
 package ru.alfalab.gradle.platform.stack.application
 
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
+import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -12,10 +13,11 @@ import static ru.alfalab.gradle.platform.stack.application.ArtifactoryConvention
 class ArtifactoryConventionSpringBootDynamicConfiguratorTest {
 
   @Mock ArtifactoryPluginConvention convention
+  @Mock ArtifactoryTask             task
 
   @Test
   void 'should filter properties with null and empty values'() {
-    def subject = configureArtifactoryConventionForSpringBoot(convention)
+    def subject = configureArtifactoryConventionForSpringBoot(convention, task)
         .withAppArtifactProperties([
         nullvalue      : null,
         emptyvalue     : '',

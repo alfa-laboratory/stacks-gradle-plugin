@@ -47,7 +47,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
       // upload app jar
       wireMockRule.stubFor(requestMatching({ Request request ->
         if (request.method == RequestMethod.PUT &&
-            request.url.startsWith('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-app.jar') &&
+            request.url.startsWith('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-classifier.jar') &&
             request.url.contains('Module-Source=') &&
             request.url.contains('Module-Origin=') &&
             request.url.contains('build.number=') &&
@@ -55,7 +55,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=api') &&
-            request.url.contains('platform.deployment.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aapp') &&
+            request.url.contains('platform.deployment.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
             request.url.contains('platform.deployment.app-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.artifact-type=service')) {
@@ -148,9 +148,9 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
       successfully.wasExecuted('app0:build')
       successfully.wasExecuted('app0:bootRepackage')
       wireMockRule.verify(1, putRequestedFor(urlMatching('/api/build')))
-      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-app.jar.*')))
-      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-app.jar.*platform.label=api.*')))
-      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-app.jar.*platform.deployment.id=.*artifacts.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-classifier.jar.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-classifier.jar.*platform.label=api.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-classifier.jar.*platform.deployment.id=.*artifacts.*')))
 
       wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-javadoc.jar.*')))
       wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-javadoc.jar.*platform.label=doc.*')))
@@ -161,7 +161,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
       wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-sources.jar.*platform.label=source.*')))
 
       wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-groovydoc.jar.*')))
-      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-groovydoc.jar.*fuck.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-groovydoc.jar.*advanced.*')))
 
       wireMockRule.findUnmatchedRequests()?.requests?.forEach {
         println 'not found:'
@@ -184,15 +184,16 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
           apply plugin: 'stacks.artifactory'
           artifactoryPublish {
                 properties {
-                  all '*:*:*:groovydoc@*', 'platform.fuck':'fuck'
+                  all '*:*:*:groovydoc@*', 'platform.advanced':'advanced-property'
                 }
           }
 
-//          stacks {
-//            application {
-//              classifier = 'classifier'
-//            }
-//          }          
+          stacks {
+            application {
+              classifier = 'classifier'
+            }
+          }
+                    
         }
         
         artifactory {

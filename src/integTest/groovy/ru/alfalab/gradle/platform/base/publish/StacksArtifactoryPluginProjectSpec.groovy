@@ -1,11 +1,7 @@
 package ru.alfalab.gradle.platform.base.publish
 
-import groovy.transform.CompileStatic
 import nebula.test.ProjectSpec
-import org.gradle.api.Project
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
-import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
-import ru.alfalab.gradle.platform.stack.base.StacksBasePlugin
 import ru.alfalab.gradle.platform.stack.base.publish.StacksArtifactoryPlugin
 
 /**
@@ -20,7 +16,7 @@ class StacksArtifactoryPluginProjectSpec extends ProjectSpec {
     then:
       project.pluginManager.hasPlugin 'stacks.artifactory'
       project.pluginManager.hasPlugin 'com.jfrog.artifactory'
-      project.pluginManager.hasPlugin 'nebula.maven-publish'
+      project.pluginManager.hasPlugin 'stacks.publications'
 
       project.convention.findPlugin ArtifactoryPluginConvention
   }
@@ -30,11 +26,13 @@ class StacksArtifactoryPluginProjectSpec extends ProjectSpec {
       def sub0Prject = addSubproject('sub0')
 
     when:
+      sub0Prject.apply plugin: 'java'
       sub0Prject.apply plugin: StacksArtifactoryPlugin
 
     then:
       project.pluginManager.hasPlugin 'com.jfrog.artifactory'
-      project.pluginManager.hasPlugin 'nebula.maven-publish'
+      project.pluginManager.hasPlugin 'stacks.publications'
+      project.pluginManager.hasPlugin 'maven-publish'
 
       project.convention.findPlugin ArtifactoryPluginConvention
   }

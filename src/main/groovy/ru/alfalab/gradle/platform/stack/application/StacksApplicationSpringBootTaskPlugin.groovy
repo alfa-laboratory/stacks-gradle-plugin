@@ -2,8 +2,6 @@ package ru.alfalab.gradle.platform.stack.application
 
 import groovy.transform.CompileStatic
 import nebula.plugin.info.InfoBrokerPlugin
-import nebula.plugin.publishing.maven.MavenBasePublishPlugin
-import nebula.plugin.publishing.maven.MavenPublishPlugin
 import org.gradle.api.Action
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.plugins.JavaPlugin
@@ -41,19 +39,33 @@ class StacksApplicationSpringBootTaskPlugin extends StacksAbstractPlugin impleme
 
       String jarTaskDefaultName = JavaPlugin.JAR_TASK_NAME
 
-//      pluginContainer.withType(MavenPublishPlugin) {
-        StacksExtension stacksExtension = extensionContainer.findByType(StacksExtension)
-        taskContainer.getByName(jarTaskDefaultName) { Jar j ->
-          if (!j.classifier) {
-            j.classifier = stacksExtension.applicationConfig.classifierProvider.getOrElse('app')
+      StacksExtension stacksExtension = extensionContainer.findByType(StacksExtension)
+
+      taskContainer.getByName(jarTaskDefaultName) { Jar j ->
+        //Set three times, for each situation:
+        // — artifactory plugin integration in configuration phase
+        // — build with right classifier
+        // — artifactory plugin and maven-publish in deploy phase
+        if (!j.classifier) {
+          afterEvaluate {
+            j.classifier = extractClassifier(stacksExtension)
           }
+          j.classifier = extractClassifier(stacksExtension)
         }
 
+        j.doFirst { Jar doFirstTask ->
+          if (!j.classifier) {
+            doFirstTask.classifier = extractClassifier(stacksExtension)
+          }
+        }
+      }
+
+      afterEvaluate {
         taskContainer.withType(RepackageTask) { RepackageTask t ->
           t.withJarTask = taskContainer.findByName(jarTaskDefaultName)
           t.setClassifier stacksExtension.applicationConfig.classifierProvider.getOrElse('app')
         }
-//      }
+      }
 
       pluginContainer.withType(InfoBrokerPlugin) { InfoBrokerPlugin brokerPlugin ->
         debug 'nebula.info plugin enabled. Try to configure spring boot plugin with nebula.info'
@@ -67,6 +79,10 @@ class StacksApplicationSpringBootTaskPlugin extends StacksAbstractPlugin impleme
       }
 
     }
+  }
+
+  private String extractClassifier(StacksExtension stacksExtension) {
+    stacksExtension.applicationConfig.classifierProvider.getOrElse('app')
   }
 
 }
