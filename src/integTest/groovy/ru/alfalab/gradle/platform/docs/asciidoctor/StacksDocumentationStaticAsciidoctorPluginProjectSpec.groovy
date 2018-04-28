@@ -43,7 +43,7 @@ class StacksDocumentationStaticAsciidoctorPluginProjectSpec extends PluginProjec
       project.jruby.defaultRepositories == false
 
 
-      project.asciidoctor.dependsOn.size() == 0
+      project.asciidoctor.dependsOn.findAll { it.name == 'jrubyPrepare' }.size() == 1
 
   }
 

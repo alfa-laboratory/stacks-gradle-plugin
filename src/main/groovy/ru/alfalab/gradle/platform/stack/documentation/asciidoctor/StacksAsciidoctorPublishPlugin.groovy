@@ -5,6 +5,7 @@ import org.asciidoctor.gradle.AsciidoctorTask
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.dsl.ArtifactHandler
 import org.gradle.api.file.CopySpec
+import org.gradle.api.internal.TaskOutputsInternal
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.bundling.Zip
@@ -36,7 +37,7 @@ class StacksAsciidoctorPublishPlugin extends StacksAbstractPlugin implements Plu
         asciidocDistZip.with { CopySpec copySpec ->
           inputs.files asciidoctorTask.outputs
           classifier = 'docs'
-          copySpec.from(asciidoctorTask.outputs)
+          copySpec.from(extractAsciidoctorTaskOutput(asciidoctorTask))
         }
 
         pluginContainer.withType(ArtifactoryPlugin) {
@@ -44,8 +45,10 @@ class StacksAsciidoctorPublishPlugin extends StacksAbstractPlugin implements Plu
           configurations.maybeCreate(STACKS_ASCIIDOCTOR_DOC_ARCHIVE_CONFIGURATION)
 
           project.artifacts { ArtifactHandler artifactHandler ->
-            artifactHandler.add(STACKS_ASCIIDOCTOR_DOC_ARCHIVE_CONFIGURATION, asciidocDistZip) { ConfigurablePublishArtifact configurablePublishArtifact ->
-              configurablePublishArtifact.classifier = 'docs'
+            artifactHandler.add(STACKS_ASCIIDOCTOR_DOC_ARCHIVE_CONFIGURATION, asciidocDistZip) {
+              ConfigurablePublishArtifact configurablePublishArtifact
+                ->
+                configurablePublishArtifact.classifier = 'docs'
             }
 
             taskContainer.withType(ArtifactoryTask) { ArtifactoryTask task ->
@@ -59,5 +62,12 @@ class StacksAsciidoctorPublishPlugin extends StacksAbstractPlugin implements Plu
     }
 
 
+  }
+
+  private Object extractAsciidoctorTaskOutput(AsciidoctorTask asciidoctorTask) {
+    if (asciidoctorTask.backend == 'html5' || 'html5' in asciidoctorTask.backends) {
+      return project.file(asciidoctorTask.outputDir.path + '/html5')
+    }
+    return asciidoctorTask.outputs
   }
 }

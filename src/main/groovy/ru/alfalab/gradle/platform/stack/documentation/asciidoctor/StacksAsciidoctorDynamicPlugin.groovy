@@ -16,7 +16,7 @@ class StacksAsciidoctorDynamicPlugin extends StacksAbstractPlugin implements Plu
   void applyPlugin() {
 
     pluginContainer.withId('org.asciidoctor.convert') {
-      apply plugin: 'com.github.jruby-gradle.base'
+      pluginContainer.apply 'com.github.jruby-gradle.base'
 
       project.jruby {
         defaultRepositories false
@@ -29,6 +29,8 @@ class StacksAsciidoctorDynamicPlugin extends StacksAbstractPlugin implements Plu
         sourceDir 'src/docs/asciidoc'
         requires 'asciidoctor-diagram'
 
+        gemPath = project.tasks.jrubyPrepare.outputDir
+
         attributes 'source-highlighter': 'coderay',
                    'imagesdir': 'images',
                    'toc': 'left',
@@ -39,6 +41,9 @@ class StacksAsciidoctorDynamicPlugin extends StacksAbstractPlugin implements Plu
                    'docinfo1': 'true',
                    'toclevels': 5,
                    'snippets': file('build/generated-snippets')
+
+        dependsOn project.tasks.jrubyPrepare
+        mustRunAfter project.tasks.jrubyPrepare //only for specific cases, dependsOn is more strong requirement
       }
 
     }
