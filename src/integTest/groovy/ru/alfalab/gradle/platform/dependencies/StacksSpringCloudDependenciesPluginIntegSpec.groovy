@@ -38,7 +38,7 @@ class StacksSpringCloudDependenciesPluginIntegSpec extends IntegrationSpec {
 
     expect:
       def result = runTasksSuccessfully('dependencies')
-      result.standardOutput.contains 'org.springframework.cloud:spring-cloud-starter-eureka: -> 1.1.2' //sign of Brixton.SR1
+      result.standardOutput.contains 'org.springframework.cloud:spring-cloud-starter-eureka -> 1.1.2' //sign of Brixton.SR1
   }
 
   def 'should use Edgware.SR1 as default spring cloud version'() {
@@ -62,7 +62,7 @@ class StacksSpringCloudDependenciesPluginIntegSpec extends IntegrationSpec {
 
     expect:
       def result = runTasksSuccessfully('dependencies')
-      result.standardOutput.contains 'org.springframework.cloud:spring-cloud-starter-eureka: -> 1.4.2' //sign of Edgwarder.SR1
+      result.standardOutput.contains 'org.springframework.cloud:spring-cloud-starter-eureka -> 1.4.2' //sign of Edgwarder.SR1
   }
 
   //TODO add maven bom support for DependencyGraphBuilder

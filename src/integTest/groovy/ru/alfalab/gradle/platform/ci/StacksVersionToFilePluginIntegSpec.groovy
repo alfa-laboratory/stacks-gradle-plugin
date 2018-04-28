@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat
  */
 class StacksVersionToFilePluginIntegSpec extends IntegrationSpec {
 
-  def 'should override spring-boo-dependencies version by stacks extension'() {
+  def 'should write project version file to build directory'() {
     given:
       buildFile << """\
         ${applyPlugin(StacksVersionToFilePlugin)}

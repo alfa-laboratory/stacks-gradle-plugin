@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat
  */
 class StacksSpringBootDependenciesPluginIntegSpec extends IntegrationSpec {
 
-  def 'should override spring-boo-dependencies version by stacks extension'() {
+  def 'should override spring-boot-dependencies version by stacks extension'() {
     given:
       buildFile << """\
         apply plugin: 'org.springframework.boot'
@@ -44,7 +44,7 @@ class StacksSpringBootDependenciesPluginIntegSpec extends IntegrationSpec {
 
     expect:
       def result = runTasksSuccessfully('dependencies')
-      result.standardOutput.contains 'org.springframework.boot:spring-boot-starter-web: -> 1.5.7.RELEASE'
+      result.standardOutput.contains 'org.springframework.boot:spring-boot:1.5.7.RELEASE (*)'
   }
 
   def 'should use 1.5.9.RELEASE as default spring version'() {
@@ -68,7 +68,7 @@ class StacksSpringBootDependenciesPluginIntegSpec extends IntegrationSpec {
 
     expect:
       def result = runTasksSuccessfully('dependencies')
-      result.standardOutput.contains 'org.springframework.boot:spring-boot-starter-web: -> 1.5.9.RELEASE'
+      result.standardOutput.contains 'org.springframework.boot:spring-boot-starter-web -> 1.5.9.RELEASE'
   }
 
   def 'should user version from ext.springBootVersion if extension version was not configured'() {
@@ -94,7 +94,7 @@ class StacksSpringBootDependenciesPluginIntegSpec extends IntegrationSpec {
 
     expect:
       def result = runTasksSuccessfully('dependencies')
-      result.standardOutput.contains 'org.springframework.boot:spring-boot-starter-web: -> 1.5.7.RELEASE'
+      result.standardOutput.contains 'org.springframework.boot:spring-boot-starter-web -> 1.5.7.RELEASE'
   }
 
 

@@ -133,7 +133,7 @@ tasks.withType(FindBugs) {
     html.enabled = true
   }
   classes = classes.filter {
-    !it.name.endsWith('.json')
+    !it.name.endsWith('.json') || !it.name.endsWith('Spec.groovy')
   }
 }
 
