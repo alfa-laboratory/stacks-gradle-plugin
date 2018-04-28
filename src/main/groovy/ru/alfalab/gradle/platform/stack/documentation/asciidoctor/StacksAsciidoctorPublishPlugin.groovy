@@ -65,9 +65,18 @@ class StacksAsciidoctorPublishPlugin extends StacksAbstractPlugin implements Plu
   }
 
   private Object extractAsciidoctorTaskOutput(AsciidoctorTask asciidoctorTask) {
-    if (asciidoctorTask.backend == 'html5' || 'html5' in asciidoctorTask.backends) {
+    if ('html5' in activeBackends(asciidoctorTask)) {
       return project.file(asciidoctorTask.outputDir.path + '/html5')
     }
     return asciidoctorTask.outputs
+  }
+
+  private Set<String> activeBackends(AsciidoctorTask asciidoctorTask) {
+    if (asciidoctorTask.backends) {
+      return asciidoctorTask.backends
+    } else if (asciidoctorTask.backend) {
+      return [asciidoctorTask.backend] as Set
+    }
+    ['html5'] as Set //default backend
   }
 }
