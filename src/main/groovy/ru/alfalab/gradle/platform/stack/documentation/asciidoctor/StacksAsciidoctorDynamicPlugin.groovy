@@ -1,5 +1,6 @@
 package ru.alfalab.gradle.platform.stack.documentation.asciidoctor
 
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.PluginContainer
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
@@ -17,6 +18,33 @@ class StacksAsciidoctorDynamicPlugin extends StacksAbstractPlugin implements Plu
     pluginContainer.withId('org.asciidoctor.convert') {
       apply plugin: 'com.github.jruby-gradle.base'
 
+      project.jruby {
+        defaultRepositories false
+      }
+
+      project.asciidoctor {
+        inputs.dir file('build/generated-snippets')
+        attributes 'snippets': file('build/generated-snippets')
+        outputDir 'build/asciidoc'
+        sourceDir 'src/docs/asciidoc'
+        requires 'asciidoctor-diagram'
+
+        attributes 'source-highlighter': 'coderay',
+                   'imagesdir': 'images',
+                   'toc': 'left',
+                   'icons': 'font',
+                   'setanchors': 'true',
+                   'idprefix': '',
+                   'idseparator': '-',
+                   'docinfo1': 'true',
+                   'toclevels': 5,
+                   'snippets': file('build/generated-snippets')
+      }
+
+    }
+
+    pluginContainer.withType(JavaPlugin) {
+      project.asciidoctor.dependsOn project.test
     }
 
   }
