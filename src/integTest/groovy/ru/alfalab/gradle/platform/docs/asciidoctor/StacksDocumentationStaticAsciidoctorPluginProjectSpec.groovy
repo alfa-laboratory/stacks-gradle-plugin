@@ -66,8 +66,19 @@ class StacksDocumentationStaticAsciidoctorPluginProjectSpec extends PluginProjec
       project.jruby.defaultRepositories == false
 
 
-
       project.asciidoctor.dependsOn.findAll { it.name == 'test' }.size() == 1
+  }
+
+  def 'should output archive contain index.html in root for html5 backend'() {
+    when:
+      project.plugins.with {
+        apply getPluginName()
+        apply 'java'
+        apply 'com.jfrog.artifactory'
+      }
+
+    then:
+      project.tasks.findByName('stacksDocsAsciidoctorDistZip').mainSpec.sourcePaths.findAll { it.path.endsWith '/html5' }.size() == 1
   }
   @Override
   String getPluginName() {
