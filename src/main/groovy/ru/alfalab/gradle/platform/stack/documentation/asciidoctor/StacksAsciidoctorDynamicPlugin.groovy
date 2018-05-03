@@ -24,7 +24,6 @@ class StacksAsciidoctorDynamicPlugin extends StacksAbstractPlugin implements Plu
 
       project.asciidoctor {
         inputs.dir file('build/generated-snippets')
-        attributes 'snippets': file('build/generated-snippets')
         outputDir 'build/asciidoc'
         sourceDir 'src/docs/asciidoc'
         requires 'asciidoctor-diagram'

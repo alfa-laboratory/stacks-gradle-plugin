@@ -5,15 +5,16 @@ import org.asciidoctor.gradle.AsciidoctorTask
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.dsl.ArtifactHandler
 import org.gradle.api.file.CopySpec
-import org.gradle.api.internal.TaskOutputsInternal
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.bundling.Zip
+import org.jfrog.build.extractor.clientConfiguration.ArtifactSpec
 import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
+import ru.alfalab.gradle.platform.stack.base.publish.ArtifactoryTaskMergePropertiesConfigurer
 
 /**
  * @author tolkv
@@ -55,6 +56,15 @@ class StacksAsciidoctorPublishPlugin extends StacksAbstractPlugin implements Plu
               task.skip = false
               task.publishIvy = false
               task.publishConfigs(STACKS_ASCIIDOCTOR_DOC_ARCHIVE_CONFIGURATION)
+
+              new ArtifactoryTaskMergePropertiesConfigurer(task).putAllSpecTo([
+                  ArtifactSpec.builder()
+                              .artifactNotation('*:*:*:docs@*')
+                              .configuration(STACKS_ASCIIDOCTOR_DOC_ARCHIVE_CONFIGURATION)
+                              .properties(['platform.artifact-type': 'docs-asciidoctor',
+                                           'platform.label'        : 'doc'])
+                              .build()
+              ])
             }
           }
         }
@@ -71,7 +81,7 @@ class StacksAsciidoctorPublishPlugin extends StacksAbstractPlugin implements Plu
     return asciidoctorTask.outputs
   }
 
-  private Set<String> activeBackends(AsciidoctorTask asciidoctorTask) {
+  private static Set<String> activeBackends(AsciidoctorTask asciidoctorTask) {
     if (asciidoctorTask.backends) {
       return asciidoctorTask.backends
     } else if (asciidoctorTask.backend) {

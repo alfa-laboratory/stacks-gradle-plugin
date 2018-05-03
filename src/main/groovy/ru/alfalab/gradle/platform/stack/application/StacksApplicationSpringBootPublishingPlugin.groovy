@@ -55,7 +55,8 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
           'platform.artifact.group': project.group?.toString(),
           'platform.artifact.name' : project.name,
           'platform'               : 'true',
-          'version'                : project.version?.toString()
+          'version'                : project.version?.toString(),
+          'platform.app'           : 'true'
       ]
 
       if (description) {
@@ -67,10 +68,7 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
           'platform.label'        : 'doc',
       ]
 
-      def groovydocProperties = [
-          'platform.artifact-type': 'groovydoc',
-          'platform.label'        : 'doc',
-      ]
+      def groovydocProperties = []
 
       def sourcesProperties = [
           'platform.artifact-type': 'sourcecode',
@@ -100,15 +98,9 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
     plugins.withType(ArtifactoryPlugin) { ArtifactoryPlugin p ->
       debug 'configure publications and meta info for spring boot application project'
       plugins.withType(MavenPublishPlugin) {
-//        afterEvaluate {
-          taskContainer.withType(ArtifactoryTask, closure)
-//        }
+        taskContainer.withType(ArtifactoryTask, closure)
       }
 
-//        extensionContainer.configure(PublishingExtension) { PublishingExtension publishingExtension ->
-//          publishingExtension.publications { PublicationContainer publicationContainer ->
-//          }
-//        }
     }
   }
 

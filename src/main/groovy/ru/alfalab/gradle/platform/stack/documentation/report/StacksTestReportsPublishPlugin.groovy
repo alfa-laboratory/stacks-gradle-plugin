@@ -10,11 +10,13 @@ import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
+import org.jfrog.build.extractor.clientConfiguration.ArtifactSpec
 import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
+import ru.alfalab.gradle.platform.stack.base.publish.ArtifactoryTaskMergePropertiesConfigurer
 
 @CompileStatic
 class StacksTestReportsPublishPlugin extends StacksAbstractPlugin implements PluginContainerAware, TaskContainerAware {
@@ -51,6 +53,15 @@ class StacksTestReportsPublishPlugin extends StacksAbstractPlugin implements Plu
           task.skip = false
           task.publishIvy = false
           task.publishConfigs(STACKS_TEST_REPORTS_ARCHIVE_CONFIGURATION)
+
+          new ArtifactoryTaskMergePropertiesConfigurer(task).putAllSpecTo([
+              ArtifactSpec.builder()
+                          .artifactNotation("*:*:*:$TEST_REPORT_CLASSIFIER@*")
+                          .configuration(STACKS_TEST_REPORTS_ARCHIVE_CONFIGURATION)
+                          .properties(['platform.artifact-type': 'test-report',
+                                       'platform.label'        : 'doc'])
+                          .build()
+          ])
         }
       }
 

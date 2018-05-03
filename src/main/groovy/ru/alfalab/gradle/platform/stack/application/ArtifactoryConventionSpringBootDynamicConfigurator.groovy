@@ -1,10 +1,9 @@
 package ru.alfalab.gradle.platform.stack.application
 
 import org.jfrog.build.extractor.clientConfiguration.ArtifactSpec
-import org.jfrog.build.extractor.clientConfiguration.ArtifactSpecs
-import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
+import ru.alfalab.gradle.platform.stack.base.publish.ArtifactoryTaskMergePropertiesConfigurer
 
 class ArtifactoryConventionSpringBootDynamicConfigurator {
   private ArtifactoryPluginConvention artifactoryConvention
@@ -98,40 +97,29 @@ class ArtifactoryConventionSpringBootDynamicConfigurator {
       }
     }
 
-    //TOOD super mega hack
-    task.doFirst {
-      ArtifactSpecs specs = task.artifactSpecs
-      def artifactSpecs = [
-          ArtifactSpec.builder()
-                      .artifactNotation('*:*:*:' + appClassifier + '@*')
-                      .configuration('nebula')
-                      .properties(appArtifactProperties)
-                      .build(),
-          ArtifactSpec.builder()
-                      .artifactNotation('*:*:*:groovydoc@*')
-                      .configuration('all')
-                      .properties(groovydocArtifactProperties)
-                      .build(),
-          ArtifactSpec.builder()
-                      .artifactNotation('*:*:*:javadoc@*')
-                      .configuration('nebula')
-                      .properties(javadocArtifactProperties)
-                      .build(),
-          ArtifactSpec.builder()
-                      .artifactNotation('*:*:*:sources@*')
-                      .configuration('nebula')
-                      .properties(sourcesArtifactProperties)
-                      .build()
-      ]
-
-      artifactSpecs.each { ArtifactSpec advancedSpec ->
-        if (!specs.contains(advancedSpec)) {
-          task.artifactSpecs.add(advancedSpec)
-        } else {
-          specs.findAll { it == advancedSpec }.each { it.properties.putAll(advancedSpec.properties) }
-        }
-      }
-    }
+    //TODO super mega hack
+    new ArtifactoryTaskMergePropertiesConfigurer(task).putAllSpecTo([
+        ArtifactSpec.builder()
+                    .artifactNotation('*:*:*:' + appClassifier + '@*')
+                    .configuration('nebula')
+                    .properties(appArtifactProperties)
+                    .build(),
+        ArtifactSpec.builder()
+                    .artifactNotation('*:*:*:groovydoc@*')
+                    .configuration('all')
+                    .properties(groovydocArtifactProperties)
+                    .build(),
+        ArtifactSpec.builder()
+                    .artifactNotation('*:*:*:javadoc@*')
+                    .configuration('nebula')
+                    .properties(javadocArtifactProperties)
+                    .build(),
+        ArtifactSpec.builder()
+                    .artifactNotation('*:*:*:sources@*')
+                    .configuration('nebula')
+                    .properties(sourcesArtifactProperties)
+                    .build()
+    ])
 
   }
 
