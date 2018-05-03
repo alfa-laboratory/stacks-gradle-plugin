@@ -191,7 +191,7 @@ Provide default behaviour with Zip tasks and publications
 
 ### How to use
 
-    apply plugin: 'com.jfrog.artifactory'    //optional
+    apply plugin: 'stacks.publications'      //optional or use com.jfrog.artifactory plugin directly
     apply plugin: 'org.asciidoctor.convert'  //optional
     apply plugin: 'stacks.doc'
 
@@ -273,3 +273,14 @@ Apply all docs plugin needed for configure project with docs backed by asciidoct
 ### How to use
 
     apply plugin: 'stacks.doc.asciidoctor'
+    
+## Plugin `stacks.report.test`
+
+Plugin for configure report archive based on test data like `JUnit`
+Now support only html5 backend
+
+### How to use
+
+    apply plugin: 'stacks.publications'   //optional or use com.jfrog.artifactory plugin directly
+    apply plugin: 'java'                  //optional but nothing todo without this, because no any inputs
+    apply plugin: 'stacks.report.test'
