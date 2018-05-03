@@ -178,10 +178,29 @@ Resolve spring boot dependencies version according next order
 ###
 ## Plugin `stacks.doc`
 
+Composite plugin for apply other plugins like `stacks.doc.asciidoctor` and save project structure —
+
+* Automatic detect `org.asciidoctor.convert` plugin
+* Apply `stacks.doc.asciidoctor` and `stacks.doc.asciidoctor.publish` 
+* _Detect project structure in feature version_
+
 ### Mission
+
+Simplify project documentation plugins configuration and publishing logic.
+Provide default behaviour with Zip tasks and publications
 
 ### How to use
 
+    apply plugin: 'com.jfrog.artifactory'    //optional
+    apply plugin: 'org.asciidoctor.convert'  //optional
+    apply plugin: 'stacks.doc'
+
+Now, prefer to use plugin `stacks.doc.asciidoctor`, because it directly applying all important plugins 
+
+`stacks.doc.asciidoctor` is excellent choice for simple doc project if you don't need some customization.
+ Use it right:
+
+    apply plugin: 'stacks.doc.asciidoctor'
 
 # Side Plugins
 
@@ -246,4 +265,11 @@ Apply `stacks.dependencies` plugin
 
     apply plugin: 'stacks.lang.groovy'
    
- 
+
+## Plugin `stacks.doc.asciidoctor`
+
+Apply all docs plugin needed for configure project with docs backed by asciidoctor
+
+### How to use
+
+    apply plugin: 'stacks.doc.asciidoctor'
