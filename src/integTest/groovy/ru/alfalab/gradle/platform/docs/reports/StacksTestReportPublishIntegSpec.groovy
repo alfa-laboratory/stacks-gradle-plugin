@@ -32,15 +32,38 @@ class StacksTestReportPublishIntegSpec extends IntegrationSpec {
     then:
       result.wasExecuted('test')
 
-      findIndexHtmlInRootTestReportZip()
-
+      findIndexHtmlInRootTestReportZip('should-configure-archive-for-publish-testReport')
   }
 
-  boolean findIndexHtmlInRootTestReportZip() {
+  def 'should be independent on plugin order'() {
+    given:
+      buildFile << '''  
+      group = 'stacks.report.test.publish'
+      apply plugin: 'stacks.report.test'
+      apply plugin: 'java'
+      
+      dependencies {
+        testCompile 'junit:junit:4.12'
+      }
+'''
+
+      writeHelloWorld('stacks.report.test.publish')
+      writeUnitTest(false)
+
+    when:
+      def result = runTasksSuccessfully(StacksTestReportsPublishPlugin.STACKS_TEST_REPORT_ARCHIVE_TASKNAME)
+
+    then:
+      result.wasExecuted('test')
+
+      findIndexHtmlInRootTestReportZip('should-be-independent-on-plugin-order-testReport')
+  }
+
+  boolean findIndexHtmlInRootTestReportZip(String archiveName) {
     boolean result = false
 
     new ZipFile(
-        projectDir.path + '/build/distributions/should-configure-archive-for-publish-testReport.zip').withCloseable {
+        projectDir.path + "/build/distributions/${archiveName}.zip").withCloseable {
       result = it.entries().findAll { it.name == 'index.html' }.size() == 1
     }
 
