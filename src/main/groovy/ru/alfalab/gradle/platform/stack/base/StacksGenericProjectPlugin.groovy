@@ -74,9 +74,6 @@ class StacksGenericProjectPlugin extends StacksAbstractPlugin {
       testTask.testLogging.exceptionFormat = 'full'
     }
 
-    Map<String, String> props = ['platform.fuck': 'fuck', 'platform.label':'app']
-    Map<String, String> props2 = ['platform.fuck2': 'fuck2']
-
     plugins.withType(ArtifactoryPlugin) { ArtifactoryPlugin artifactoryPlugin ->
       plugins.withType(JavadocJarPlugin) {
         tasks.withType(ArtifactoryTask) { ArtifactoryTask t ->
