@@ -2,10 +2,12 @@ package ru.alfalab.gradle.platform.stack.application
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom
 import org.gradle.api.tasks.TaskContainer
+import org.jfrog.build.extractor.clientConfiguration.ArtifactSpec
 import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
@@ -14,6 +16,7 @@ import ru.alfalab.gradle.platform.stack.api.ExtensionContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksExtension
+import ru.alfalab.gradle.platform.stack.base.publish.ArtifactoryTaskMergePropertiesConfigurer
 
 import static java.lang.String.format
 import static ru.alfalab.gradle.platform.stack.application.ArtifactoryConventionSpringBootDynamicConfigurator.configureArtifactoryConventionForSpringBoot
@@ -91,6 +94,18 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
           .withJavadocArtifactProperties(commonProperties + javadocProperties)
           .withSourcesArtifactProperties(commonProperties + sourcesProperties)
           .finish()
+
+      rootProject.allprojects { Project currentProject ->
+        currentProject.tasks.withType(ArtifactoryTask) { ArtifactoryTask artifactoryTask ->
+          new ArtifactoryTaskMergePropertiesConfigurer(artifactoryTask).putAllSpecTo([
+              ArtifactSpec.builder()
+                  .artifactNotation('*:*:*:*@*')
+                  .configuration('all')
+                  .properties(['platform.service.id': deploymentId])
+                  .build()
+          ])
+        }
+      }
     }
   }
 

@@ -27,7 +27,8 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
 
   def setup() {
     createAppSubproject('app0')
-    createLibSubproject('lib0')
+    createDocSubproject('lib0')
+    createFile('lib0/src/docs/asciidoc/index.adoc') << '''# Intro'''
   }
 
   @Override
@@ -56,6 +57,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=api') &&
             request.url.contains('platform.deployment.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
             request.url.contains('platform.deployment.app-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
             request.url.contains('platform.artifact-type=service')) {
@@ -75,6 +77,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             request.url.contains('platform.label=doc') &&
             request.url.contains('platform=true') &&
             request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
             request.url.contains('platform.artifact-type=groovydoc')) {
           return MatchResult.exactMatch()
         }
@@ -93,6 +96,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             request.url.contains('platform.label=doc') &&
             request.url.contains('platform=true') &&
             request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
             request.url.contains('platform.artifact-type=javadoc')) {
           return MatchResult.exactMatch()
         }
@@ -110,6 +114,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             request.url.contains('platform.label=source') &&
             request.url.contains('platform=true') &&
             request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
             request.url.contains('platform.artifact-type=sourcecode')) {
           return MatchResult.exactMatch()
         }
@@ -123,6 +128,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
         if (request.method == RequestMethod.PUT &&
             request.url.startsWith('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT.pom') &&
             request.url.contains('build.number=') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
             !request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             !request.url.contains('platform.artifact.name=app0') &&
             !request.url.contains('platform.label=source') &&
@@ -135,6 +141,18 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
       }).willReturn(aResponse()
                         .withBodyFile('http/artifactory/put.snapshots.ru.alfalab.test.app0.json')
                         .withStatus(200)))
+
+      wireMockRule.stubFor(requestMatching({ Request request ->
+        if (request.method == RequestMethod.PUT &&
+            request.url.startsWith('/snapshots/ru/alfalab/test/lib0/0.1.0-SNAPSHOT/lib0-0.1.0-SNAPSHOT-docs.zip') &&
+            request.url.contains('build.number=') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier')) {
+          return MatchResult.exactMatch()
+        }
+        return MatchResult.noMatch()
+      }).willReturn(aResponse()
+          .withBodyFile('http/artifactory/put.snapshots.ru.alfalab.test.app0.json')
+          .withStatus(200)))
 
       // publish build info
       wireMockRule.stubFor(put('/api/build')
@@ -163,6 +181,9 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
       wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-groovydoc.jar.*')))
       wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-groovydoc.jar.*advanced-property.*')))
       wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-groovydoc.jar.*platform.label=doc.*')))
+
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/lib0/0.1.0-SNAPSHOT/lib0-0.1.0-SNAPSHOT-docs.zip.*')))
+      wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/lib0/0.1.0-SNAPSHOT/lib0-0.1.0-SNAPSHOT-docs.zip.*platform.advanced=advanced-docs-property.*')))
 
       wireMockRule.findUnmatchedRequests()?.requests?.forEach {
         println 'not found:'
@@ -193,6 +214,16 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             }
           }
                     
+        }
+        
+        project(':lib0') {
+          apply plugin: 'stacks.artifactory'
+          apply plugin: 'stacks.doc.asciidoctor'
+          artifactoryPublish {
+              properties {
+                all '*:*:*:*@*', 'platform.advanced':'advanced-docs-property'
+              }
+          }         
         }
         
         artifactory {
