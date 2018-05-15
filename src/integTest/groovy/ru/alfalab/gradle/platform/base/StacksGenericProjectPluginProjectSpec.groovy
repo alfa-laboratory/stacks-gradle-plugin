@@ -11,8 +11,8 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import ru.alfalab.gradle.platform.stack.base.StacksAnnotationProcessingPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksGenericProjectPlugin
-import ru.alfalab.gradle.platform.stack.base.publish.StacksPublicationPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksReleasePlugin
 
 /**
@@ -27,23 +27,17 @@ class StacksGenericProjectPluginProjectSpec extends PluginProjectSpec {
       project.apply plugin: StacksGenericProjectPlugin
 
     then:
-      project.plugins.hasPlugin(StacksPublicationPlugin)
       project.plugins.hasPlugin(JavadocJarPlugin)
       project.plugins.hasPlugin(SourceJarPlugin)
       project.plugins.hasPlugin(InfoPlugin)
       project.plugins.hasPlugin(ContactsPlugin)
       project.plugins.hasPlugin(DependencyLockPlugin)
+      project.plugins.hasPlugin(StacksAnnotationProcessingPlugin)
       !project.plugins.hasPlugin(StacksReleasePlugin)
 
       project.tasks.withType(Javadoc).every { (!it.failOnError) }
       project.tasks.withType(Test).every { it.testLogging.exceptionFormat == TestExceptionFormat.FULL }
       project.tasks.withType(JavaCompile).every { it.options.encoding == 'UTF-8' }
-      project.tasks.withType(JavaCompile).every {
-        it.options.compilerArgs == [
-            '-Amapstruct.defaultComponentModel=spring',
-            '-Amapstruct.unmappedTargetPolicy=IGNORE'
-        ]
-      }
       project.tasks.withType(GroovyCompile).every { it.options.encoding == 'UTF-8' }
 
   }
@@ -53,10 +47,10 @@ class StacksGenericProjectPluginProjectSpec extends PluginProjectSpec {
       project.apply plugin: StacksGenericProjectPlugin
 
     then:
-      project.plugins.hasPlugin(StacksPublicationPlugin)
       !project.plugins.hasPlugin(JavadocJarPlugin)
       !project.plugins.hasPlugin(SourceJarPlugin)
       project.plugins.hasPlugin(InfoPlugin)
+      project.plugins.hasPlugin(StacksAnnotationProcessingPlugin)
       project.plugins.hasPlugin(ContactsPlugin)
       project.plugins.hasPlugin(DependencyLockPlugin)
       !project.plugins.hasPlugin(StacksReleasePlugin)

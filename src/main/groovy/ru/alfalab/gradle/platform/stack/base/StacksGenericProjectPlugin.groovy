@@ -20,11 +20,6 @@ import ru.alfalab.gradle.platform.stack.base.publish.StacksPublicationPlugin
 class StacksGenericProjectPlugin extends StacksAbstractPlugin {
   @Override
   void applyPlugin() {
-    // Publishing
-    plugins.withType(BasePlugin) {
-      plugins.apply StacksPublicationPlugin
-    }
-
     plugins.withType(JavaPlugin) {
       plugins.apply JavadocJarPlugin
       plugins.apply SourceJarPlugin
@@ -43,7 +38,6 @@ class StacksGenericProjectPlugin extends StacksAbstractPlugin {
     project.plugins.apply 'nebula.dependency-lock'
     project.plugins.apply 'nebula.dependency-recommender'
 
-    // TODO Publish javadoc somehow
     project.tasks.withType(Javadoc) { Javadoc task ->
       task.with {
         failOnError = false
@@ -57,18 +51,7 @@ class StacksGenericProjectPlugin extends StacksAbstractPlugin {
       }
     }
 
-    project.tasks.withType(JavaCompile) { JavaCompile t ->
-      t.with {
-        options.encoding = 'UTF-8'
-        //For map struct and lombok
-        if (!options.compilerArgs.contains('-Amapstruct.defaultComponentModel=spring')) {
-          options.compilerArgs += '-Amapstruct.defaultComponentModel=spring'
-        }
-        if (!options.compilerArgs.contains('-Amapstruct.unmappedTargetPolicy=IGNORE')) {
-          options.compilerArgs += '-Amapstruct.unmappedTargetPolicy=IGNORE'
-        }
-      }
-    }
+    project.plugins.apply StacksAnnotationProcessingPlugin
 
     project.tasks.withType(Test) { Test testTask ->
       testTask.testLogging.exceptionFormat = 'full'
