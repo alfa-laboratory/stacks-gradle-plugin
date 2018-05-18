@@ -15,7 +15,9 @@ class StacksSpringCloudDependenciesPluginIntegSpec extends IntegrationSpec {
   def 'should override spring-cloud-dependencies version by stacks extension'() {
     given:
       buildFile << """\
-        apply plugin: 'org.springframework.boot'
+        apply plugin: 'io.spring.dependency-management'
+        apply plugin: 'java'
+        
         ${applyPlugin(StacksSpringCloudDependenciesPlugin)}
 
         group = 'ru.alfalab.stacks.dependencies.cloud.simple'
@@ -44,7 +46,9 @@ class StacksSpringCloudDependenciesPluginIntegSpec extends IntegrationSpec {
   def 'should use Edgware.SR1 as default spring cloud version'() {
     given:
       buildFile << """\
-        apply plugin: 'org.springframework.boot'
+        apply plugin: 'java'
+        apply plugin: 'io.spring.dependency-management'
+        
         ${applyPlugin(StacksSpringCloudDependenciesPlugin)}
 
         group = 'ru.alfalab.stacks.dependencies.cloud.simple'

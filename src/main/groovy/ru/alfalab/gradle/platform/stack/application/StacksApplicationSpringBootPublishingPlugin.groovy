@@ -11,9 +11,9 @@ import org.jfrog.build.extractor.clientConfiguration.ArtifactSpec
 import org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
-import org.springframework.boot.gradle.repackage.RepackageTask
 import ru.alfalab.gradle.platform.stack.api.ExtensionContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
+import ru.alfalab.gradle.platform.stack.application.spring.SpringBootVersionsHelper
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksExtension
 import ru.alfalab.gradle.platform.stack.base.publish.ArtifactoryTaskMergePropertiesConfigurer

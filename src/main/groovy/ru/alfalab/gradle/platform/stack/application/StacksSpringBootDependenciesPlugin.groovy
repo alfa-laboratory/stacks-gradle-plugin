@@ -9,7 +9,6 @@ import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
-import org.springframework.boot.gradle.plugin.SpringBootPlugin
 import ru.alfalab.gradle.platform.stack.api.ExtensionContainerAware
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
@@ -19,6 +18,9 @@ import ru.alfalab.gradle.platform.stack.base.StacksExtension
 import static ru.alfalab.gradle.platform.stack.spring.StacksSpringConfiguration.DEFAULT_SPRING_BOOT_VERSION
 
 /**
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * Does not work. Because SpringBootPlugin import static spring boot version and don't provide ability to override version
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  * @author tolkv
  * @version 20/12/2017
  */
@@ -29,7 +31,9 @@ class StacksSpringBootDependenciesPlugin extends StacksAbstractPlugin implements
 
   @Override
   void applyPlugin() {
-    pluginContainer.withType(SpringBootPlugin) {
+    plugins.apply 'io.spring.dependency-management'
+
+    pluginContainer.withId('org.springframework.boot') {
       pluginContainer.withType(DependencyManagementPlugin) { DependencyManagementPlugin p ->
 
         afterEvaluate {

@@ -84,12 +84,13 @@ dependencies {
   compile "com.netflix.nebula:nebula-release-plugin:$nebula_release_plugin"
 
   compile "io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE"
-  compile "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
   compile "org.jfrog.buildinfo:build-info-extractor-gradle:${jfrogExtractorVersion}"
   compile "org.asciidoctor:asciidoctor-gradle-plugin:${asciidoctorGradlePluginVersion}"
   compile "org.asciidoctor:asciidoctorj:${asciidoctorjVersion}"
   compile "org.asciidoctor:asciidoctorj-diagram:${asciidoctorjDiagramVersion}"
 
+  compileOnly "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+  testCompileOnly "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 
   compile('com.github.jruby-gradle:jruby-gradle-plugin:1.5.0') {
     exclude group: 'org.eclipse.jetty'

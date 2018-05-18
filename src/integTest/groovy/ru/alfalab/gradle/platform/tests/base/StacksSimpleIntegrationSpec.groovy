@@ -14,6 +14,7 @@ class StacksSimpleIntegrationSpec extends IntegrationSpec {
     addSubproject(
         name,
         """
+      apply plugin: 'org.springframework.boot'
       ${applyPlugin(StacksApplicationPlugin)}
       stacks {
         application {
@@ -29,6 +30,7 @@ class StacksSimpleIntegrationSpec extends IntegrationSpec {
     addSubproject(
         name,
         """
+      apply plugin: 'org.springframework.boot'
       ${applyPlugin(StacksApplicationPlugin)}
       """.stripIndent()
     )

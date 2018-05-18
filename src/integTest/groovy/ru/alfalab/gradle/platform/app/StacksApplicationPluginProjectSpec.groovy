@@ -18,9 +18,25 @@ class StacksApplicationPluginProjectSpec extends PluginProjectSpec {
     then:
       project.plugins.hasPlugin(StacksDependenciesPlugin)
       project.plugins.hasPlugin(StacksSpringCloudDependenciesPlugin)
-      project.plugins.hasPlugin(StacksSpringBootDependenciesPlugin)
 
   }
+
+  def 'should apply all plugins to root project [spec]'() {
+    given:
+      def sub = createSubproject(project, 'sub')
+      project.subprojects.add(sub)
+
+    when:
+      sub.apply plugin: StacksApplicationPlugin
+
+    then:
+      sub.plugins.hasPlugin(StacksDependenciesPlugin)
+      sub.plugins.hasPlugin(StacksSpringCloudDependenciesPlugin)
+
+      project.plugins.hasPlugin('nebula.dependency-recommender')
+
+  }
+
 
   @Override
   String getPluginName() {
