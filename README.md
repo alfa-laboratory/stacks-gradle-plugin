@@ -20,32 +20,45 @@ Apply this plugin to project or subproject which contained a deployable Spring B
 
 Simplify Spring Boot Application configuration
 
-* configure jar task – add classifier `app`
+* configure jar task – add classifier `app` or customize it by `stacks.application.classifier`
 * add simple dependency management. See Unified DSL in extension section
 * mark produced artifact, add next properties
     
-    platform.artifact-type=API
-    platform.deployment.app-name=project.name
-    platform.repo.key=git project key (extract from remotes/origin)
-    platform.repo.slug=git project slug (extract from remotes/origin)
-    platform.label=APP
-    version=project.version
+        #required
+        platform.artifact-type=service
+        platform.artifact.group=project.group
+        platform.deployment.app-name=project.name
+        platform.deployment.id=project.group:project.name[/subproject.name]:classifier
+        platform.repo.key=git project key (extract from remotes/origin)
+        platform.repo.slug=git project slug (extract from remotes/origin)
+        platform.label=api
+        platform=true
+        version=project.version
+        
+        #optional
+        platform.display-name=project.name
+        platform.template.id=? only for projects from template
+        platform.template.version=? only for projects from template
 
 Export additional info to `/info` endpoint in app. See `spring-boot-actuator`    
 
 ### How to use
+    
+    //org.springframework.boot is required, because spring don't provide ability to change SB version
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'stacks.app.spring-boot'
+    
     stacks {
       application {
-        classifier = 'classifier'
-        title = 'test-project'
+        classifier = 'classifier' //maven artifact classifier
+        title = 'test-project'    //display-name, export to platform.display-name
       }
     }
-    apply plugin: 'stacks.app.spring-boot'
 
-### Extension 
+### Extension default value 
 
     stacks {
-      application {
+      {
         classifier = 'app'
         title = rootProject.name
       }
@@ -58,7 +71,7 @@ Export additional info to `/info` endpoint in app. See `spring-boot-actuator`
 
 ## Plugin `stacks.release`
 
-Nebula Release backend plugin
+Nebula Release backend plugin. Apply version to file plugin too
 
 ### Mission
 
@@ -81,6 +94,7 @@ Requirements:
 2. build -rc artifact (use repo from `stacks.repositories.releases` section provided by `stacks.artifactory` plugin)
 3. build release artifact (use repo from `stacks.repositories.releases` section provided by `stacks.artifactory` plugin)
 
+**TIP:** _See `project-version` file in root project build dir_
 
 ## Plugin `stacks.artifactory`
 
@@ -91,6 +105,35 @@ Configure artifactory tasks and publish logic
 Configure artifactory tasks, publish repositories and integrate with other plugins
 Use it with `stacks.publications` plugin and `stacks.release`
 
+Automatic determine user, password and repository context url by next properties:
+
+    $ cat ~/.gradle/gradle.properties
+    
+    artifactory_user=<YOUR_USER>
+    artifactory_password=<YOUR_ENCRYPTED_PASSWORD>
+    artifactory_contextUrl=https://<my_maven_repository>/artifactory
+
+Eliminate next boilerplate:
+
+    artifactory {
+      publish {
+        contextUrl = project.findProperty('artifactory_contextUrl')
+        repository {
+          repoKey = resolvedRepoKey
+          username = project.findProperty('artifactory_user')
+          password = project.findProperty('artifactory_password')
+        }
+      }
+
+      resolve {
+        contextUrl = project.findProperty('artifactory_contextUrl')
+        repository {
+          username = project.findProperty('artifactory_user')
+          password = project.findProperty('artifactory_password')
+        }
+      }
+    }
+    
 ### How to use
 
     apply plugin: 'stacks.artifactory`
@@ -144,7 +187,10 @@ Default values can by override by artifactory section in user `build.gradle` fil
 Configure Dependency Management Plugin
 May be useful for batch dependency configuration for
 
-* spring
+* spring cloud
+
+**WARNING:** Spring Boot 2 does't support version customizatiom. Use òrg.springframework.boot` plugin as independent plugin.
+Only Spring Cloud version may be changed by stacks extension
 
 ### Mission
 
@@ -154,34 +200,44 @@ Add generic dependencies like lombok
 ### How to use
 
     apply plugin: 'stacks.dependencies'
-    
-Resolve spring boot dependencies version according next order
-
-1. from `stacks.spring.bootVersion`
-2. from `ext.springBootVersion` if `stacks.spring.bootVersion` not set     
 
 ### Extension 
 
      stacks {
         spring {
-          cloudVersion 'Edgware.SR1'  //<-- default value
-          bootVersion '1.5.9.RELEASE' //<-- default value
+          cloudVersion '1.5.9.RELEASE' //<-- default value
+          
+          //not implemented yet
+          enableSpringCloudConfig()
+          enableSpringCloudBus()
+          enableSpringCloudSleuth()
+          enableSpringCloudStreamSleuth()
+          enableSpringCloudStreamSleuthZipkin()
+          enableSpringCloudEureka()
+          enableSpringCloudFeign()
+          enableSpringBootWeb()
         }    
      }
 
 ## Plugin `stacks.lib`
 
+Configure groovy/java project with groovydoc/javadoc and publications (see `stacks.artifactory` plugin)
+
 ### Mission
+
+Simplify libs and starters creation process
 
 ### How to use
 
-###
+    apply plugin: 'stacks.lib`
+
+
 ## Plugin `stacks.doc`
 
 Composite plugin for apply other plugins like `stacks.doc.asciidoctor` and save project structure —
 
 * Automatic detect `org.asciidoctor.convert` plugin
-* Apply `stacks.doc.asciidoctor` and `stacks.doc.asciidoctor.publish` 
+* Apply `stacks.doc.asciidoctor` or `stacks.doc.asciidoctor.publish` if you already have configured asciidoctor project 
 * _Detect project structure in feature version_
 
 ### Mission
@@ -201,6 +257,11 @@ Now, prefer to use plugin `stacks.doc.asciidoctor`, because it directly applying
  Use it right:
 
     apply plugin: 'stacks.doc.asciidoctor'
+    
+    //extend default properties
+    asciidoctor {
+        attribitues my_snippet_dir: file('my_snipptet_dir')
+    }
 
 # Side Plugins
 

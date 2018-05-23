@@ -11,7 +11,6 @@ import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
 import ru.alfalab.gradle.platform.stack.base.publish.ArtifactoryTaskMergePropertiesConfigurer
-import ru.alfalab.gradle.platform.stack.base.publish.StacksPublicationPlugin
 
 /**
  * @author tolkv
@@ -26,8 +25,6 @@ class StacksProgramLanguageGroovydocPublishingPlugin extends StacksAbstractPlugi
 
   @Override
   void applyPlugin() {
-    pluginManager.apply StacksPublicationPlugin
-
     plugins.withType(StacksProgramLanguageGroovydocPlugin) {
       Task groovydocJarTask = taskContainer.findByName('groovydocJar')
 

@@ -42,9 +42,10 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
       def artifactNameInDeploymentId = rootProject.name != project.name ? rootProject.name + '/' + project.name : project.name
       String deploymentId = format('%s:%s:%s', rootProject.group, "${artifactNameInDeploymentId}", applicationClassifier)
 
-      taskContainer.withType(RepackageTask) { RepackageTask repackageTask ->
-        t.dependsOn repackageTask
-      }
+      new SpringBootVersionsHelper(project)
+          .withSpringBoot1XXAction { Project p -> t.dependsOn p.tasks.findByName("bootRepackage") }
+          .withSpringBoot2XXAction { Project p -> t.dependsOn p.tasks.findByName("bootJar") }
+          .execute()
 
       t.with {
         skip = false
@@ -112,10 +113,10 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
   void configureArtifactoryTaskWithPublicationsLazyInit(Action<ArtifactoryTask> closure) {
     plugins.withType(ArtifactoryPlugin) { ArtifactoryPlugin p ->
       debug 'configure publications and meta info for spring boot application project'
+
       plugins.withType(MavenPublishPlugin) {
         taskContainer.withType(ArtifactoryTask, closure)
       }
-
     }
   }
 

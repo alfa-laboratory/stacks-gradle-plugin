@@ -50,7 +50,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'nebula.release'
 
 ext {
-  springBootVersion = '1.5.9.RELEASE'
+  springBootVersion = '2.0.2.RELEASE'
 }
 
 repositories {

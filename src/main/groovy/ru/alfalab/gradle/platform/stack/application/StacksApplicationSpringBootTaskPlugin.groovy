@@ -2,19 +2,17 @@ package ru.alfalab.gradle.platform.stack.application
 
 import groovy.transform.CompileStatic
 import nebula.plugin.info.InfoBrokerPlugin
-import org.gradle.api.Action
+import org.gradle.api.GradleException
+import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.jvm.tasks.Jar
-import org.springframework.boot.gradle.SpringBootPluginExtension
-import org.springframework.boot.gradle.buildinfo.BuildInfo
-import org.springframework.boot.gradle.plugin.SpringBootPlugin
-import org.springframework.boot.gradle.repackage.RepackageTask
 import ru.alfalab.gradle.platform.stack.api.ExtensionContainerAware
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
 import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
+import ru.alfalab.gradle.platform.stack.application.spring.SpringBootVersionsHelper
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksExtension
 
@@ -30,58 +28,50 @@ class StacksApplicationSpringBootTaskPlugin extends StacksAbstractPlugin impleme
 
   @Override
   void applyPlugin() {
-    plugins.withType(SpringBootPlugin) { SpringBootPlugin p ->
+    plugins.withId('org.springframework.boot') {
       debug 'spring boot enabled. Check nebula.info plugin'
-
-      extensionContainer.configure(SpringBootPluginExtension, { SpringBootPluginExtension springExtension ->
-        springExtension.buildInfo()
-      } as Action<SpringBootPluginExtension>)
-
-      String jarTaskDefaultName = JavaPlugin.JAR_TASK_NAME
 
       StacksExtension stacksExtension = extensionContainer.findByType(StacksExtension)
 
-      taskContainer.getByName(jarTaskDefaultName) { Jar j ->
-        //Set three times, for each situation:
-        // — artifactory plugin integration in configuration phase
-        // — build with right classifier
-        // — artifactory plugin and maven-publish in deploy phase
-        if (!j.classifier) {
-          afterEvaluate {
-            j.classifier = extractClassifier(stacksExtension)
-          }
-          j.classifier = extractClassifier(stacksExtension)
-        }
-
-        j.doFirst { Jar doFirstTask ->
-          if (!j.classifier) {
-            doFirstTask.classifier = extractClassifier(stacksExtension)
-          }
-        }
+      tasks.findByName('jar')?.configure { Jar j ->
+        j.enabled = false
       }
 
-      afterEvaluate {
-        taskContainer.withType(RepackageTask) { RepackageTask t ->
-          t.withJarTask = taskContainer.findByName(jarTaskDefaultName)
-          t.setClassifier stacksExtension.applicationConfig.classifierProvider.getOrElse('app')
-        }
-      }
+      new SpringBootVersionsHelper(project).withSpringBoot1XXAction {
+        Project p -> configureClassifierAfterProjectEvaluation 'bootRepackage', stacksExtension
+      }.withSpringBoot2XXAction {
+        Project p -> configureClassifierAfterProjectEvaluation 'bootJar', stacksExtension
+      }.execute()
 
-      pluginContainer.withType(InfoBrokerPlugin) { InfoBrokerPlugin brokerPlugin ->
+      //Integrate with nebula.info plugin
+      plugins.withType(InfoBrokerPlugin) { InfoBrokerPlugin brokerPlugin ->
         debug 'nebula.info plugin enabled. Try to configure spring boot plugin with nebula.info'
 
         def manifest = brokerPlugin.buildNonChangingManifest()
 
-        taskContainer.withType(BuildInfo) { BuildInfo task ->
-          task.additionalProperties.putAll(manifest)
-        }
-
+        extensionContainer.configure 'springBoot', new StacksApplicationSpringBootExtensionBuildInfoDynamicAction(manifest)
       }
-
     }
   }
 
-  private String extractClassifier(StacksExtension stacksExtension) {
+  private void configureClassifierAfterProjectEvaluation(String taskName, StacksExtension stacksExtension) {
+    def task = project.tasks.findByName(taskName)
+    if(task instanceof AbstractArchiveTask) {
+      //WTF ? Two times! Need to investigate this mistake..
+      //without afterEvaluate ru.alfalab.gradle.platform.app.StacksApplicationPluginIntegSpec does not working
+      //without simple set ru.alfalab.gradle.platform.app.StacksApplicationPluginPublishingIntegSpec does not working
+      //both required :(
+      def archiveTask = task as AbstractArchiveTask
+      archiveTask.classifier = extractClassifier(stacksExtension)
+      afterEvaluate {
+        archiveTask.classifier = extractClassifier(stacksExtension)
+      }
+    } else {
+      throw new GradleException("Can't configure classifier for bootJar task or bootRepackage task. Please check plugin and gradle versions.")
+    }
+  }
+
+  private static String extractClassifier(StacksExtension stacksExtension) {
     stacksExtension.applicationConfig.classifierProvider.getOrElse('app')
   }
 

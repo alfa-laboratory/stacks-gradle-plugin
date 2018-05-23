@@ -1,21 +1,14 @@
 package ru.alfalab.gradle.platform.app
 
-import com.github.tomakehurst.wiremock.client.MappingBuilder
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import com.github.tomakehurst.wiremock.matching.MatchResult
-import com.github.tomakehurst.wiremock.matching.RequestPattern
-import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
-import com.github.tomakehurst.wiremock.matching.UrlPathPattern
-import com.github.tomakehurst.wiremock.matching.ValueMatcher
 import org.junit.Rule
 import ru.alfalab.gradle.platform.tests.base.StacksGitIntegrationSpec
-import ru.alfalab.gradle.platform.tests.base.StacksSimpleIntegrationSpec
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 
 /**
  * @author tolkv
@@ -164,7 +157,7 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
 
     then:
       successfully.wasExecuted('app0:build')
-      successfully.wasExecuted('app0:bootRepackage')
+      successfully.wasExecuted('app0:bootRepackage') || successfully.wasExecuted('app0:bootJar') //sp1 and sp2 task
       wireMockRule.verify(1, putRequestedFor(urlMatching('/api/build')))
       wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-classifier.jar.*')))
       wireMockRule.verify(1, putRequestedFor(urlMatching('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT-classifier.jar.*platform.label=api.*')))

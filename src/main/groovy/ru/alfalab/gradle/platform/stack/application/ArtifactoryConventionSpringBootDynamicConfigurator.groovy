@@ -1,5 +1,6 @@
 package ru.alfalab.gradle.platform.stack.application
 
+import org.gradle.api.publish.maven.MavenPublication
 import org.jfrog.build.extractor.clientConfiguration.ArtifactSpec
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
@@ -81,19 +82,17 @@ class ArtifactoryConventionSpringBootDynamicConfigurator {
   }
 
   void finish() {
-    artifactoryConvention.artifactory {
-      publish {
-        defaults {
-          skip = false
-          publications('nebula')
-        }
-      }
-    }
-
     task.skip = false
-    artifactoryConvention.project.publishing {
-      publications {
-        task.publications(nebula)
+    def project = artifactoryConvention.project
+
+    project.plugins.withType(StacksApplicationSpringBootTaskPlugin) {
+      project.publishing {
+        publications {
+          bootJava(MavenPublication) {
+            artifact project.tasks.findByPath('bootJar') //TODO needs backward compatibility with SP1
+            task.publications(bootJava)
+          }
+        }
       }
     }
 
@@ -101,7 +100,7 @@ class ArtifactoryConventionSpringBootDynamicConfigurator {
     new ArtifactoryTaskMergePropertiesConfigurer(task).putAllSpecTo([
         ArtifactSpec.builder()
                     .artifactNotation('*:*:*:' + appClassifier + '@*')
-                    .configuration('nebula')
+                    .configuration('bootJava')
                     .properties(appArtifactProperties)
                     .build(),
         ArtifactSpec.builder()

@@ -29,7 +29,8 @@ class StacksPublicationPlugin extends StacksAbstractPlugin implements PluginCont
       apply MavenPublishPlugin
 
       //Stacks
-      apply MavenNebulaPublishPlugin
+      apply org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+
       apply MavenBasePublishPlugin
       apply MavenCompileOnlyPlugin
       apply MavenResolvedDependenciesPlugin
