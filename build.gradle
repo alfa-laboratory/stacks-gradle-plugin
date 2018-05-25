@@ -22,7 +22,7 @@ buildscript {
   }
   dependencies {
     classpath 'com.gradle.publish:plugin-publish-plugin:0.9.10'
-    classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.7.1'
+    classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.7.3'
 
     classpath "com.netflix.nebula:nebula-project-plugin:$nebula_project_plugin"
     classpath "com.netflix.nebula:gradle-contacts-plugin:$gradle_contacts_plugin"
