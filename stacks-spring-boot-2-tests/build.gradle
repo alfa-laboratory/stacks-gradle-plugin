@@ -1,0 +1,4 @@
+dependencies {
+  testCompileOnly "org.springframework.boot:spring-boot-gradle-plugin:2.0.2.RELEASE"
+  testImplementation rootProject
+}
