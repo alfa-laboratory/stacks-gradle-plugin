@@ -53,11 +53,6 @@ ext {
   springBootVersion = '2.0.2.RELEASE'
 }
 
-repositories {
-  jcenter()
-  maven { url "https://plugins.gradle.org/m2/" }
-}
-
 group = 'ru.alfalab.gradle.platform.stack'
 
 description 'Project with set of plugins for rapid development'
@@ -69,13 +64,33 @@ contacts {
   }
 }
 
+allprojects {
+  repositories {
+    jcenter()
+    maven { url "https://plugins.gradle.org/m2/" }
+  }
+
+  apply plugin: 'groovy'
+  apply plugin: 'nebula.integtest'
+
+  group 'ru.alfalab.gradle.platform.stack'
+
+  dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.12'
+
+    testCompile 'com.netflix.nebula:nebula-test:6.1.2'
+    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+  }
+}
+
 dependencies {
   compileOnly 'org.projectlombok:lombok:1.16.18'
   compile gradleApi()
-  compile 'org.codehaus.groovy:groovy-all:2.4.12'
 
   compile "com.netflix.nebula:nebula-project-plugin:$nebula_project_plugin"
   compile "com.netflix.nebula:gradle-contacts-plugin:$gradle_contacts_plugin"
+  compile "com.netflix.nebula:gradle-dependency-lock-plugin:$gradle_dependency_lock_plugin"
   compile "com.netflix.nebula:gradle-dependency-lock-plugin:$gradle_dependency_lock_plugin"
   compile "com.netflix.nebula:nebula-dependency-recommender:$nebula_dependency_recommender"
   compile "com.netflix.nebula:gradle-extra-configurations-plugin:$gradle_extra_configurations_plugin"
@@ -89,8 +104,9 @@ dependencies {
   compile "org.asciidoctor:asciidoctorj:${asciidoctorjVersion}"
   compile "org.asciidoctor:asciidoctorj-diagram:${asciidoctorjDiagramVersion}"
 
-  compileOnly "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-  testCompileOnly "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+// do not delete this. Uncomment for test purpose
+//  compileOnly "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+//  testCompileOnly "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 
   compile('com.github.jruby-gradle:jruby-gradle-plugin:1.5.0') {
     exclude group: 'org.eclipse.jetty'
@@ -99,9 +115,6 @@ dependencies {
 
   compile 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.7'
 
-  testCompile 'com.netflix.nebula:nebula-test:6.1.2'
-  testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
-  testCompile 'org.mockito:mockito-core:1.10.19'
   testCompile "com.github.tomakehurst:wiremock:2.14.0"
 }
 
