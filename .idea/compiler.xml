@@ -8,6 +8,12 @@
       <module name="platform-gradle-stacks-plugin_integTest" target="1.8" />
       <module name="platform-gradle-stacks-plugin_main" target="1.8" />
       <module name="platform-gradle-stacks-plugin_test" target="1.8" />
+      <module name="stacks-spring-boot-1-tests_integTest" target="1.8" />
+      <module name="stacks-spring-boot-1-tests_main" target="1.8" />
+      <module name="stacks-spring-boot-1-tests_test" target="1.8" />
+      <module name="stacks-spring-boot-2-tests_integTest" target="1.8" />
+      <module name="stacks-spring-boot-2-tests_main" target="1.8" />
+      <module name="stacks-spring-boot-2-tests_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
