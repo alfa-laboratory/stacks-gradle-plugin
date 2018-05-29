@@ -1,13 +1,12 @@
 package ru.alfalab.gradle.platform.dependencies
 
-import nebula.test.IntegrationSpec
 import nebula.test.PluginProjectSpec
-import nebula.test.ProjectSpec
-import nebula.test.dependencies.DependencyGraphBuilder
-import nebula.test.dependencies.GradleDependencyGenerator
-import nebula.test.dependencies.ModuleBuilder
+import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.logging.Logger
 import ru.alfalab.gradle.platform.stack.application.StacksSpringBootDependenciesPlugin
-import spock.lang.Ignore
+import spock.lang.Unroll
 
 /**
  * @author tolkv

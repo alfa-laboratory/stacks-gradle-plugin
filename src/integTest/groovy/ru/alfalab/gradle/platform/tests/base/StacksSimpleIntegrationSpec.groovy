@@ -26,15 +26,119 @@ class StacksSimpleIntegrationSpec extends IntegrationSpec {
     writeHelloWorld("ru.stacks.test.apps.$name", file(name))
   }
 
+  protected void createSpringBoot1XXWithCustomClassifier(String name, String classifier = null) {
+    addSubproject(
+        name,
+        """
+      buildscript {
+        repositories {
+          maven {
+            url "https://plugins.gradle.org/m2/"
+          }
+        }
+        dependencies {
+          classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE"
+        }
+      }
+      apply plugin: 'org.springframework.boot'
+      ${applyPlugin(StacksApplicationPlugin)}
+
+      ${->
+          if (classifier) {
+            return """stacks {
+            application {
+              classifier = '$classifier'
+            }
+          }""".stripIndent()
+          }
+          return ''
+        }
+      dependencies {
+        compile 'org.springframework.boot:spring-boot-starter-web'
+      }
+      """.stripIndent()
+    )
+
+    writeSpringBootApplicationFile(name)
+  }
+
+  protected void createSpringBoot2XXWithCustomClassifier(String name, String classifier = null) {
+    addSubproject(
+        name,
+        """
+      buildscript {
+        repositories {
+          maven {
+            url "https://plugins.gradle.org/m2/"
+          }
+        }
+        dependencies {
+          classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.2.RELEASE"
+        }
+      }
+
+      apply plugin: 'org.springframework.boot'
+      ${applyPlugin(StacksApplicationPlugin)}
+     ${->
+          if (classifier) {
+            return """stacks {
+            application {
+              classifier = '$classifier'
+            }
+          }""".stripIndent()
+          }
+          return ''
+        }
+      dependencies {
+        compile 'org.springframework.boot:spring-boot-starter-web'
+      }
+      """.stripIndent()
+    )
+
+    writeSpringBootApplicationFile(name)
+  }
+
   protected void createAppSubproject(String name) {
     addSubproject(
         name,
         """
+      buildscript {
+        repositories {
+          maven {
+            url "https://plugins.gradle.org/m2/"
+          }
+        }
+        dependencies {
+          classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE"
+        }
+      }
+      apply plugin: 'java'
       apply plugin: 'org.springframework.boot'
       ${applyPlugin(StacksApplicationPlugin)}
+      dependencies {
+        compile 'org.springframework.boot:spring-boot-starter-web'
+      }
       """.stripIndent()
+
     )
-    writeHelloWorld("ru.stacks.test.apps.$name", file(name))
+    writeSpringBootApplicationFile(name)
+  }
+
+  private void writeSpringBootApplicationFile(String name) {
+    def packageDotted = "ru.stacks.test.apps.$name"
+    def path = './' + name + '/src/main/java/' + packageDotted.replace('.', '/') + '/HelloWorld.java'
+    def javaFile = createFile(path, getProjectDir())
+    javaFile << """\
+            package ${packageDotted};
+            import org.springframework.boot.autoconfigure.SpringBootApplication;
+            
+            @SpringBootApplication
+            public class HelloWorld {
+                public static void main(String[] args) {
+                    System.out.println("Hello Integration Test");
+                }
+            }
+            """.stripIndent()
   }
 
   protected void createLibSubproject(String name) {

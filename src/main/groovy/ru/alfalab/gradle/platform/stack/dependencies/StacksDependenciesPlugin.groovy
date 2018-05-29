@@ -4,6 +4,7 @@ import groovy.transform.CompileStatic
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin
 import org.gradle.api.plugins.PluginContainer
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
+import ru.alfalab.gradle.platform.stack.application.StacksSpringBootDependenciesPlugin
 import ru.alfalab.gradle.platform.stack.application.StacksSpringCloudDependenciesPlugin
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
 
@@ -20,7 +21,7 @@ class StacksDependenciesPlugin extends StacksAbstractPlugin implements PluginCon
     pluginContainer.apply DependencyManagementPlugin
     pluginContainer.withId('org.springframework.boot') {
       //TODO wait for a fix... I don't know that to do now.
-      //pluginContainer.apply StacksSpringBootDependenciesPlugin
+      pluginContainer.apply StacksSpringBootDependenciesPlugin
       pluginContainer.apply StacksSpringCloudDependenciesPlugin
     }
   }

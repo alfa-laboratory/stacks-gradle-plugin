@@ -1,5 +1,6 @@
 package ru.alfalab.gradle.platform.stack.application
 
+import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.jfrog.build.extractor.clientConfiguration.ArtifactSpec
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
@@ -89,7 +90,7 @@ class ArtifactoryConventionSpringBootDynamicConfigurator {
       project.publishing {
         publications {
           bootJava(MavenPublication) {
-            artifact project.tasks.findByPath('bootJar') //TODO needs backward compatibility with SP1
+            artifact resolveJarTask(project) //TODO needs backward compatibility with SP1
             task.publications(bootJava)
           }
         }
@@ -120,6 +121,18 @@ class ArtifactoryConventionSpringBootDynamicConfigurator {
                     .build()
     ])
 
+  }
+
+  /**
+   * Only for support SP1 and SP2 in one version
+   * @param project with spring-boot plugin
+   * @return target archive task
+   */
+  def resolveJarTask(Project project) {
+    def bootJar = project.tasks.findByPath('bootJar')
+    if(bootJar)
+      return bootJar
+    return project.tasks.findByPath('jar')
   }
 
 }

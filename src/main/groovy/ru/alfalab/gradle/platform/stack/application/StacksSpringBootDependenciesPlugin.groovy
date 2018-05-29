@@ -1,69 +1,42 @@
 package ru.alfalab.gradle.platform.stack.application
 
 import groovy.transform.CompileStatic
-import io.spring.gradle.dependencymanagement.DependencyManagementPlugin
-import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
-import io.spring.gradle.dependencymanagement.dsl.ImportsHandler
-import org.gradle.api.Action
-import org.gradle.api.plugins.ExtensionContainer
-import org.gradle.api.plugins.ExtraPropertiesExtension
-import org.gradle.api.plugins.PluginContainer
-import org.gradle.api.tasks.TaskContainer
-import ru.alfalab.gradle.platform.stack.api.ExtensionContainerAware
-import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
-import ru.alfalab.gradle.platform.stack.api.TaskContainerAware
+import org.gradle.api.Plugin
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import ru.alfalab.gradle.platform.stack.base.StacksAbstractPlugin
-import ru.alfalab.gradle.platform.stack.base.StacksExtension
-
-import static ru.alfalab.gradle.platform.stack.spring.StacksSpringConfiguration.DEFAULT_SPRING_BOOT_VERSION
 
 /**
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * Does not work. Because SpringBootPlugin import static spring boot version and don't provide ability to override version
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ *
  * @author tolkv
  * @version 20/12/2017
  */
 @CompileStatic
-class StacksSpringBootDependenciesPlugin extends StacksAbstractPlugin implements PluginContainerAware, ExtensionContainerAware {
-  PluginContainer    pluginContainer
-  ExtensionContainer extensionContainer
+class StacksSpringBootDependenciesPlugin extends StacksAbstractPlugin {
+  public static final String STACKS_DEPENDENCIES_BOOT_DEFAULT = 'stacksDependenciesBootDefault'
 
   @Override
   void applyPlugin() {
     plugins.apply 'io.spring.dependency-management'
 
-    pluginContainer.withId('org.springframework.boot') {
-      pluginContainer.withType(DependencyManagementPlugin) { DependencyManagementPlugin p ->
-
-        afterEvaluate {
-
-          extensionContainer.configure(DependencyManagementExtension) { DependencyManagementExtension extension ->
-            def springConfiguration = extensionContainer.findByType(StacksExtension).springConfig
-            def bootVersionProvider = springConfiguration.bootVersionProvider
-
-            def type = extensionContainer.findByType(ExtraPropertiesExtension)
-            def springBootVersionFromExt = type.getProperties().get('springBootVersion')
-            def springBootVersionFromStacksExtension = bootVersionProvider.getOrElse(DEFAULT_SPRING_BOOT_VERSION)
-
-            def resolvedSpringBootVersion
-
-            if (springBootVersionFromExt && springBootVersionFromStacksExtension == DEFAULT_SPRING_BOOT_VERSION) {
-              resolvedSpringBootVersion = springBootVersionFromExt
-            } else {
-              resolvedSpringBootVersion = springBootVersionFromStacksExtension
-            }
-
-            extension.imports(
-                { ImportsHandler importsHandler ->
-                  importsHandler.mavenBom("org.springframework.boot:spring-boot-dependencies:${resolvedSpringBootVersion}")
-                } as Action<ImportsHandler>)
-          }
-
+    project.plugins.withId('org.springframework.boot') { Plugin plugin ->
+      project.plugins.withId('io.spring.dependency-management') {
+        dependencies { DependencyHandler dh ->
+          dh.add(resolveDefaultConfiguration(), 'org.springframework.boot:spring-boot-autoconfigure')
         }
-
       }
+
     }
+  }
+
+  String resolveDefaultConfiguration() {
+    Configuration newConf = configurations.findByName('implementation') //for gradle 4.7+
+
+    if (newConf != null) {
+      return 'implementation'
+    }
+
+    return 'compile' //before gradle 4.7
   }
 
 }

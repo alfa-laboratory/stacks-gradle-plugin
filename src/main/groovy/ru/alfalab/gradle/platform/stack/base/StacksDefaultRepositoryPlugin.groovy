@@ -21,8 +21,17 @@ class StacksDefaultRepositoryPlugin implements Plugin<Project> {
 
   void useJcenterAsDefaultRepo() {
     if (noRepoPresented()) {
-      warn 'repo list is empty. Set jcenter as default repository'
+      info 'repo list is empty. Set jcenter as default repository'
+
       repositoryHandler.jcenter()
+    } else {
+      def jcenter = repositoryHandler.findByName("jcenter")
+      if (jcenter) {
+        repositoryHandler.remove(jcenter)
+        repositoryHandler.addLast(jcenter)
+      } else {
+        repositoryHandler.jcenter()
+      }
     }
   }
 
@@ -36,6 +45,7 @@ class StacksDefaultRepositoryPlugin implements Plugin<Project> {
     this.logger = target.logger
     this.repositoryHandler = target.repositories
 
+    useJcenterAsDefaultRepo()
     afterEvaluate { Project p ->
       useJcenterAsDefaultRepo()
     }

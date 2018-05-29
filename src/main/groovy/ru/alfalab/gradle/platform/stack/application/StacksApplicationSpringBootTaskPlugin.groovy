@@ -7,7 +7,6 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.jvm.tasks.Jar
 import ru.alfalab.gradle.platform.stack.api.ExtensionContainerAware
 import ru.alfalab.gradle.platform.stack.api.PluginContainerAware
@@ -33,15 +32,24 @@ class StacksApplicationSpringBootTaskPlugin extends StacksAbstractPlugin impleme
 
       StacksExtension stacksExtension = extensionContainer.findByType(StacksExtension)
 
-      tasks.findByName('jar')?.configure { Jar j ->
-        j.enabled = false
-      }
+      withSpringBootVersionResolver {
 
-      new SpringBootVersionsHelper(project).withSpringBoot1XXAction {
-        Project p -> configureClassifierAfterProjectEvaluation 'bootRepackage', stacksExtension
-      }.withSpringBoot2XXAction {
-        Project p -> configureClassifierAfterProjectEvaluation 'bootJar', stacksExtension
-      }.execute()
+        withSpringBoot1XXAction { Project p ->
+          configureClassifierAfterProjectEvaluation 'bootRepackage', stacksExtension
+          configureJarTask { Jar j ->
+            j.classifier = stacksExtension.applicationConfig.classifierProvider.getOrElse('app')
+            afterEvaluate {
+              j.classifier = stacksExtension.applicationConfig.classifierProvider.getOrElse('app')
+            }
+            configureRepackageTask()
+          }
+        }
+
+        withSpringBoot2XXAction { Project p ->
+          configureClassifierAfterProjectEvaluation 'bootJar', stacksExtension
+          configureJarTask { Jar j -> j.enabled = false } // not used in SP2 plugin. Disable for avoid conflicts
+        }
+      }
 
       //Integrate with nebula.info plugin
       plugins.withType(InfoBrokerPlugin) { InfoBrokerPlugin brokerPlugin ->
@@ -49,30 +57,50 @@ class StacksApplicationSpringBootTaskPlugin extends StacksAbstractPlugin impleme
 
         def manifest = brokerPlugin.buildNonChangingManifest()
 
-        extensionContainer.configure 'springBoot', new StacksApplicationSpringBootExtensionBuildInfoDynamicAction(manifest)
+        withSpringBootVersionResolver {
+
+          withSpringBoot1XXAction {
+            extensionContainer.configure 'springBoot', new StacksApplicationSpringBootExtensionBuildInfo1XXDynamicAction(manifest)
+          }
+
+          withSpringBoot2XXAction {
+            extensionContainer.configure 'springBoot', new StacksApplicationSpringBootExtensionBuildInfoDynamicAction(manifest)
+          }
+        }
+
       }
     }
+  }
+
+  private void configureRepackageTask() {
+    StacksExtension stacksExtension = extensionContainer.findByType(StacksExtension)
+
+    new StacksApplicationSpringBootRepackageTaskDynamicConfigurer(stacksExtension, project)
+        .configureSpringBootRepackageTask(tasks.findByName('bootRepackage'))
+  }
+
+  private void configureJarTask(Closure closure) {
+    project.tasks.findByName('jar')?.configure closure
+  }
+
+  private void withSpringBootVersionResolver(@DelegatesTo(SpringBootVersionsHelper) Closure closure) {
+    def helper = new SpringBootVersionsHelper(project)
+    helper.with closure
+    helper.execute()
   }
 
   private void configureClassifierAfterProjectEvaluation(String taskName, StacksExtension stacksExtension) {
     def task = project.tasks.findByName(taskName)
-    if(task instanceof AbstractArchiveTask) {
-      //WTF ? Two times! Need to investigate this mistake..
-      //without afterEvaluate ru.alfalab.gradle.platform.app.StacksApplicationPluginIntegSpec does not working
-      //without simple set ru.alfalab.gradle.platform.app.StacksApplicationPluginPublishingIntegSpec does not working
-      //both required :(
-      def archiveTask = task as AbstractArchiveTask
-      archiveTask.classifier = extractClassifier(stacksExtension)
-      afterEvaluate {
-        archiveTask.classifier = extractClassifier(stacksExtension)
-      }
+
+    /**
+     * Dirty trick for supprot SP1
+     * TODO avoid this hack in future version or drop SP1 support
+     */
+    if (task.class.methods.find { it.name == 'setClassifier' }) {
+      new StacksApplicationSpringBootTaskDynamicClassifierConfigurer(stacksExtension, project)
+          .configureSpringBootJarClassifier(task)
     } else {
       throw new GradleException("Can't configure classifier for bootJar task or bootRepackage task. Please check plugin and gradle versions.")
     }
   }
-
-  private static String extractClassifier(StacksExtension stacksExtension) {
-    stacksExtension.applicationConfig.classifierProvider.getOrElse('app')
-  }
-
 }

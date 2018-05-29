@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule
 import com.github.tomakehurst.wiremock.matching.MatchResult
 import org.junit.Rule
 import ru.alfalab.gradle.platform.tests.base.StacksGitIntegrationSpec
+import spock.lang.Unroll
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
@@ -19,7 +20,6 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
   @Rule               WireMockRule wireMockRule  = new WireMockRule(options().dynamicPort(), true)
 
   def setup() {
-    createAppSubproject('app0')
     createDocSubproject('lib0')
     createFile('lib0/src/docs/asciidoc/index.adoc') << '''# Intro'''
   }
@@ -30,8 +30,15 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
     git.add(patterns: ['build.gradle', '.gitignore'] as Set)
   }
 
-  def 'should publish all artifacts from app type project'() {
+  @Unroll
+  def 'should publish all artifacts from app type project for spring boot #springBootVersion'() {
     given:
+      if (springBootVersion == '2XX') {
+        createSpringBoot2XXWithCustomClassifier('app0')
+      } else {
+        createSpringBoot1XXWithCustomClassifier('app0')
+      }
+
       wireMockRule.stubFor(get('/api/system/version')
                                .willReturn(aResponse()
                                                .withBodyFile('http/artifactory/api.system.version.json')
@@ -49,10 +56,10 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=api') &&
-            request.url.contains('platform.deployment.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
-            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
-            request.url.contains('platform.deployment.app-name=should-publish-all-artifacts-from-app-type-project') &&
-            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
+            request.url.contains('platform.deployment.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '/app0%3Aclassifier') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '/app0%3Aclassifier') &&
+            request.url.contains('platform.deployment.app-name=should-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion) &&
+            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion) &&
             request.url.contains('platform.artifact-type=service')) {
           return MatchResult.exactMatch()
         }
@@ -69,8 +76,8 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=doc') &&
             request.url.contains('platform=true') &&
-            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
-            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
+            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '/app0%3Aclassifier') &&
             request.url.contains('platform.artifact-type=groovydoc')) {
           return MatchResult.exactMatch()
         }
@@ -88,8 +95,8 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=doc') &&
             request.url.contains('platform=true') &&
-            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
-            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
+            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '/app0%3Aclassifier') &&
             request.url.contains('platform.artifact-type=javadoc')) {
           return MatchResult.exactMatch()
         }
@@ -106,8 +113,8 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
             request.url.contains('platform.artifact.name=app0') &&
             request.url.contains('platform.label=source') &&
             request.url.contains('platform=true') &&
-            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
-            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
+            request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '/app0%3Aclassifier') &&
             request.url.contains('platform.artifact-type=sourcecode')) {
           return MatchResult.exactMatch()
         }
@@ -121,12 +128,12 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
         if (request.method == RequestMethod.PUT &&
             request.url.startsWith('/snapshots/ru/alfalab/test/app0/0.1.0-SNAPSHOT/app0-0.1.0-SNAPSHOT.pom') &&
             request.url.contains('build.number=') &&
-            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier') &&
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '/app0%3Aclassifier') &&
             !request.url.contains('platform.artifact.group=' + DEFAULT_GROUP) &&
             !request.url.contains('platform.artifact.name=app0') &&
             !request.url.contains('platform.label=source') &&
             !request.url.contains('platform=true') &&
-            !request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project') &&
+            !request.url.contains('platform.display-name=should-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '') &&
             !request.url.contains('platform.artifact-type=sourcecode')) {
           return MatchResult.exactMatch()
         }
@@ -139,23 +146,22 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
         if (request.method == RequestMethod.PUT &&
             request.url.startsWith('/snapshots/ru/alfalab/test/lib0/0.1.0-SNAPSHOT/lib0-0.1.0-SNAPSHOT-docs.zip') &&
             request.url.contains('build.number=') &&
-            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project/app0%3Aclassifier')) {
+            request.url.contains('platform.service.id=ru.alfalab.test%3Ashould-publish-all-artifacts-from-app-type-project-for-spring-boot-' + springBootVersion + '/app0%3Aclassifier')) {
           return MatchResult.exactMatch()
         }
         return MatchResult.noMatch()
       }).willReturn(aResponse()
-          .withBodyFile('http/artifactory/put.snapshots.ru.alfalab.test.app0.json')
-          .withStatus(200)))
+                        .withBodyFile('http/artifactory/put.snapshots.ru.alfalab.test.app0.json')
+                        .withStatus(200)))
 
       // publish build info
       wireMockRule.stubFor(put('/api/build')
                                .willReturn(aResponse()
                                                .withStatus(204)))
 
-    when:
+    expect:
       def successfully = runTasksSuccessfully('aP')
 
-    then:
       successfully.wasExecuted('app0:build')
       successfully.wasExecuted('app0:bootRepackage') || successfully.wasExecuted('app0:bootJar') //sp1 and sp2 task
       wireMockRule.verify(1, putRequestedFor(urlMatching('/api/build')))
@@ -183,6 +189,10 @@ class StacksApplicationPluginPublishingIntegSpec extends StacksGitIntegrationSpe
         println '-' + it.url
       }
 
+    where:
+      springBootVersion || _
+      '2XX'             || _
+      '1XX'             || _
   }
 
   def configureForVersion(String version) {

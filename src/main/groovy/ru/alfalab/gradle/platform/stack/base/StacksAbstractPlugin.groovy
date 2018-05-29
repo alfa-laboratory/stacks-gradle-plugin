@@ -50,4 +50,22 @@ abstract class StacksAbstractPlugin implements Plugin<Project> {
   private static void throwIncompatibleGradleVersion(Throwable e) {
     throw new GradleException('Gradle will be 4+ version. For upgrade wrapper use \n\tgradle wrapper --gradle-version=4.1\ncommand for example', e)
   }
+
+  /**
+   * Only for test purpose
+   * @param project
+   */
+  void updateProject(Project project) {
+    this.project = project
+    warn 'Please don\'t use test api StacksAbstractPlugin#updateProject(Project p) in production'
+  }
+
+  /**
+   * Only for test purpose
+   * @param logger
+   */
+  void updateLogger(Logger logger) {
+    this.logger = logger
+    warn 'Please don\'t use test api StacksAbstractPlugin#updateLogger(Logger p) in production'
+  }
 }
