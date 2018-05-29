@@ -14,6 +14,9 @@
       <module name="stacks-spring-boot-2-tests_integTest" target="1.8" />
       <module name="stacks-spring-boot-2-tests_main" target="1.8" />
       <module name="stacks-spring-boot-2-tests_test" target="1.8" />
+      <module name="stacks-spring-boot-tests_integTest" target="1.8" />
+      <module name="stacks-spring-boot-tests_main" target="1.8" />
+      <module name="stacks-spring-boot-tests_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

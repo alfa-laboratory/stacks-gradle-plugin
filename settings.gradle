@@ -1,5 +1,6 @@
 rootProject.name = 'platform-gradle-stacks-plugin'
 
+include 'stacks-spring-boot-tests'
 include 'stacks-spring-boot-1-tests'
 include 'stacks-spring-boot-2-tests'
 

@@ -1,0 +1,7 @@
+description = '''Project for tests which not depend on spring boot version but required org.springframework.boot plugin.
+Use it for isolate classpath for specific Spring Boot version'''
+
+dependencies {
+  testCompileOnly "org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE"
+  testImplementation rootProject
+}
