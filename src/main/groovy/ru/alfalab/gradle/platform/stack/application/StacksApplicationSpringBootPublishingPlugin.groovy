@@ -98,6 +98,7 @@ class StacksApplicationSpringBootPublishingPlugin extends StacksAbstractPlugin i
 
       rootProject.allprojects { Project currentProject ->
         currentProject.tasks.withType(ArtifactoryTask) { ArtifactoryTask artifactoryTask ->
+          artifactoryTask.publishIvy = false
           new ArtifactoryTaskMergePropertiesConfigurer(artifactoryTask).putAllSpecTo([
               ArtifactSpec.builder()
                   .artifactNotation('*:*:*:*@*')
