@@ -5,6 +5,7 @@ import groovy.transform.EqualsAndHashCode
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.logging.Logger
 
 /**
@@ -25,10 +26,10 @@ class StacksDefaultRepositoryPlugin implements Plugin<Project> {
 
       repositoryHandler.jcenter()
     } else {
-      def jcenter = repositoryHandler.findByName("jcenter")
-      if (jcenter) {
-        repositoryHandler.remove(jcenter)
-        repositoryHandler.addLast(jcenter)
+      def jcenters = repositoryHandler.findAll { ArtifactRepository it -> it.name.contains 'BintrayJCenter' }
+      if (jcenters) {
+        repositoryHandler.removeAll(jcenters)
+        repositoryHandler.addLast(jcenters.first())
       } else {
         repositoryHandler.jcenter()
       }
