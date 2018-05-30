@@ -39,7 +39,10 @@ class ConfigurePublishContextUrlSpec extends StacksSimpleIntegrationSpec {
           contextUrl = 'http://supertesthost/'
         }
         
-        artifactoryPublish.skip=true
+        artifactoryPublish {
+          skip=true
+          clientConfig.publisher.publishBuildInfo = false
+        } 
         
         task taskForTest {
           doLast {
