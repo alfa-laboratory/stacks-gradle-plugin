@@ -42,17 +42,21 @@ class StacksDefaultRepositoryPluginUnitTest {
   @Test
   void 'should add jcenter as a low priority repository'() {
     given:
-      when(repositoryHandler.getAsMap()).thenReturn([
-                                                        "mavenCentral": mavenCentral,
-                                                        "sthRepo"     : sthRepo,
-                                                        "jcenter"     : jcenter
-                                                    ] as TreeMap<String, ArtifactRepository>)
+      def repositories = [
+          "mavenCentral"  : mavenCentral,
+          "sthRepo"       : sthRepo,
+          "BintrayJCenter": jcenter
+      ] as TreeMap<String, ArtifactRepository>
+
+      def repositoriesForRemove = [jcenter]
+
+      when(repositoryHandler.findAll(any(Closure))).thenReturn(repositoriesForRemove)
+      when(repositoryHandler.getAsMap()).thenReturn(repositories)
       when(repositoryHandler.findByName(anyString())).thenReturn jcenter
 
       subject.useJcenterAsDefaultRepo()
 
-      verify(repositoryHandler, times(1)).findByName("jcenter")
-      verify(repositoryHandler, times(1)).remove(jcenter)
+      verify(repositoryHandler, times(1)).removeAll(repositoriesForRemove)
       verify(repositoryHandler, times(1)).addLast(jcenter)
   }
 
@@ -61,9 +65,9 @@ class StacksDefaultRepositoryPluginUnitTest {
   void 'should add jcenter as a low priority repository without jcenter'() {
     given:
       when(repositoryHandler.getAsMap()).thenReturn([
-                                                        "mavenCentral": mavenCentral,
-                                                        "sthRepo"     : sthRepo,
-                                                        "jcenter"     : jcenter
+                                                        "mavenCentral"  : mavenCentral,
+                                                        "sthRepo"       : sthRepo,
+                                                        "BintrayJCenter": jcenter
                                                     ] as TreeMap<String, ArtifactRepository>)
       when(repositoryHandler.findByName(anyString())).thenReturn null
 
