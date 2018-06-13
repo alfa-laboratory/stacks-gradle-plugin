@@ -13,6 +13,7 @@ class StacksLibrariesPlugin extends StacksAbstractPlugin {
 
   @Override
   void applyPlugin() {
+    pluginManager.apply 'nebula.maven-publish'
     pluginManager.apply StacksProgramLanguageGroovyPlugin
   }
 }
