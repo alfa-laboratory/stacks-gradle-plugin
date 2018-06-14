@@ -14,6 +14,7 @@ class StacksPublishingConfiguration {
   private StacksExtensionRepositoriesContainer repos
   private Set<String>                          publicationsForExport
   private Set<String>                          archivesForExport
+  private Map<String, String>                  publicationsProperties
 
   StacksPublishingConfiguration(Project project) {
     this.project = project
@@ -79,5 +80,26 @@ class StacksPublishingConfiguration {
 
   StacksExtensionRepositoriesContainer getRepositories() {
     return repos
+  }
+
+  /**
+   * Set artifactory publication properties
+   *
+   * <b>for example:</b>
+   *
+   * <pre><code>
+   * publicationsProperties = [
+   *   property1: 'value1',
+   *   property.two: 'value2'
+   * ]</code></pre>
+   *
+   * @param publicationsProperties
+   */
+  void setPublicationsProperties(Map<String, String> publicationsProperties) {
+    this.publicationsProperties = publicationsProperties
+  }
+
+  Map<String, String> getPublicationsProperties() {
+    return publicationsProperties
   }
 }

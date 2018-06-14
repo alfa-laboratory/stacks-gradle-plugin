@@ -63,7 +63,7 @@ public class StacksContainerInjector {
     stacksExtension = project.getExtensions().findByType(StacksExtension.class);
     repositoryHandler = project.getRepositories();
 
-    logger.debug("\tconfigure extension container for inject: {}", extensionContainer);
+    logger.debug("\tconfigure extension   container   for inject: {}", extensionContainer);
     logger.debug("\tconfigure plugin      container   for inject: {}", pluginContainer);
     logger.debug("\tconfigure task        container   for inject: {}", taskContainer);
     logger.debug("\tconfigure extension   container   for inject: {}", extensionContainer);

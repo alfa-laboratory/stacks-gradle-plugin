@@ -3,7 +3,7 @@ package ru.alfalab.gradle.platform.stack.base
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import ru.alfalab.gradle.platform.stack.application.StacksApplicationConfiguration;
+import ru.alfalab.gradle.platform.stack.application.StacksApplicationConfiguration
 import ru.alfalab.gradle.platform.stack.base.publish.StacksPublishingConfiguration
 import ru.alfalab.gradle.platform.stack.spring.StacksSpringConfiguration
 
@@ -48,5 +48,9 @@ class StacksExtension {
 
   StacksSpringConfiguration getSpringConfig() {
     return springConfig
+  }
+
+  StacksPublishingConfiguration getPublishingConfig() {
+    return publishingConfig
   }
 }
