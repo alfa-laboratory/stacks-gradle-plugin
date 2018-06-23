@@ -10,6 +10,14 @@ import ru.alfalab.gradle.platform.stack.libraries.StacksLibrariesPlugin
  * @version 21/12/2017
  */
 class StacksSimpleIntegrationSpec extends IntegrationSpec {
+  def setup() {
+    file('gradle.properties') << '''
+      artifactory_user=testuser
+      artifactory_password=mysecretpass
+      artifactory_contextUrl=http://localhost:8080/artifactory/
+    '''
+  }
+
   protected void createAppSubprojectWithCustomClassifier(String name, String classifier) {
     addSubproject(
         name,
